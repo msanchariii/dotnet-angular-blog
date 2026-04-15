@@ -5,6 +5,7 @@ import { BlogFeed } from './pages/blog-feed/blog-feed';
 import { BlogDetails } from './pages/blog-details/blog-details';
 import { Layout } from './components/layout/layout';
 import { NewBlog } from './pages/new-blog/new-blog';
+import { MyBookmarks } from './components/my-bookmarks/my-bookmarks';
 
 export const routes: Routes = [
   {
@@ -30,7 +31,11 @@ export const routes: Routes = [
         component: BlogFeed,
         title: 'Blog Feed',
       },
-      // /{blogId}
+      {
+        path: 'bookmarks',
+        component: MyBookmarks,
+        title: 'My Bookmarks',
+      },
       {
         path: ':blogid',
         component: BlogDetails,
