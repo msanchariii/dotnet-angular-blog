@@ -7,12 +7,12 @@ public class BlogService : IBlogService
         _blogRepository = blogRepository;
     }
 
-    public async Task<ApiResponse<IEnumerable<FindBlogDto>>> GetAllBlogs(FindAllBlogsParameters @params)
+    public async Task<ApiResponse<IEnumerable<FindBlogWithBookmark>>> GetAllBlogs(FindAllBlogsParameters @params)
     {
         try
         {
             var blogs = await _blogRepository.GetAllBlogs(@params);
-            return new ApiResponse<IEnumerable<FindBlogDto>>
+            return new ApiResponse<IEnumerable<FindBlogWithBookmark>>
             {
                 Success = true,
                 Message = "Blogs fetched successfully",
@@ -22,11 +22,11 @@ public class BlogService : IBlogService
         }
         catch
         {
-            return new ApiResponse<IEnumerable<FindBlogDto>>
+            return new ApiResponse<IEnumerable<FindBlogWithBookmark>>
             {
                 Success = false,
                 Message = "Something went wrong",
-                Data = Enumerable.Empty<FindBlogDto>(),
+                Data = Enumerable.Empty<FindBlogWithBookmark>(),
                 StatusCode = 500
             };
         }

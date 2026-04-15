@@ -12,7 +12,7 @@ public class BlogRepository : IBlogRepository
     {
         _context = context;
     }
-public async Task<IEnumerable<FindBlogDto>> GetAllBlogs(FindAllBlogsParameters @params)
+    public async Task<IEnumerable<FindBlogWithBookmark>> GetAllBlogs(FindAllBlogsParameters @params)
 {
     using var connection = _context.CreateConnection();
 
@@ -27,7 +27,7 @@ public async Task<IEnumerable<FindBlogDto>> GetAllBlogs(FindAllBlogsParameters @
             b.id AS BlogId,
 
             -- AUTHOR
-            b.author AS AuthorId,
+            b.author AS UserId,
             u.first_name || ' ' || u.last_name AS AuthorName,
 
             -- CATEGORY
@@ -43,13 +43,26 @@ public async Task<IEnumerable<FindBlogDto>> GetAllBlogs(FindAllBlogsParameters @
                 ARRAY[]::text[]
             ) AS Tags,
 
-            b.created_at AS CreatedAt
+            b.created_at AS CreatedAt,
+
+            -- BOOKMARK
+            CASE 
+                WHEN bm.user_id IS NOT NULL THEN true
+                ELSE false
+            END AS IsBookmarked
 
         FROM blogs b
-        LEFT JOIN users u ON u.id = b.author
-        LEFT JOIN category c ON c.id = b.category_id
-        LEFT JOIN tag_blog tb ON tb.blog_id = b.id
-        LEFT JOIN tag t ON t.id = tb.tag_id
+        LEFT JOIN users u 
+            ON u.id = b.author AND u.is_deleted = false
+        LEFT JOIN category c 
+            ON c.id = b.category_id
+        LEFT JOIN tag_blog tb 
+            ON tb.blog_id = b.id
+        LEFT JOIN tag t 
+            ON t.id = tb.tag_id
+        LEFT JOIN bookmark bm 
+            ON bm.blog_id = b.id 
+            AND bm.user_id = @UserId
 
         WHERE b.is_deleted = false
     ");
@@ -81,7 +94,8 @@ public async Task<IEnumerable<FindBlogDto>> GetAllBlogs(FindAllBlogsParameters @
         GROUP BY 
             b.id, b.author, u.first_name, u.last_name,
             b.category_id, c.category_name,
-            b.blog_title, b.blog_content, b.created_at
+            b.blog_title, b.blog_content, b.created_at,
+            bm.user_id
     ");
 
     // ---------------- SORTING ----------------
@@ -102,9 +116,11 @@ public async Task<IEnumerable<FindBlogDto>> GetAllBlogs(FindAllBlogsParameters @
     parameters.Add("@Limit", pageSize);
     parameters.Add("@Offset", (pageNumber - 1) * pageSize);
 
-    return await connection.QueryAsync<FindBlogDto>(sql.ToString(), parameters);
-}
+    // 🔥 IMPORTANT (userId can be Guid.Empty)
+    parameters.Add("@UserId", @params.UserId ?? Guid.Empty);
 
+    return await connection.QueryAsync<FindBlogWithBookmark>(sql.ToString(), parameters);
+}
 public async Task<IEnumerable<FindBlogDto>> GetBlogsByUser(Guid userId)
     {
         using var connection = _context.CreateConnection();
@@ -128,6 +144,7 @@ public async Task<IEnumerable<FindBlogDto>> GetBlogsByUser(Guid userId)
     public async Task<FindBlogDto?> GetBlogById(Guid blogId)
     {
         using var connection = _context.CreateConnection();
+        
         var query = @"SELECT b.id AS BlogId,
                              b.author AS UserId,
                              u.first_name || ' ' || u.last_name AS AuthorName,

@@ -10,9 +10,9 @@ import { CommonModule } from '@angular/common'; // Optional for simple binding, 
 })
 export class BookmarkButton {
   @Input() isBookmarked: boolean = false;
+  @Input() blogId: string = '';
 
   handleBookmarkClick() {
     this.isBookmarked = !this.isBookmarked;
-    // Here you can also emit an event or call a service to update the bookmark status in your backend
   }
 }

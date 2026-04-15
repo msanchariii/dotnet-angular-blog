@@ -6,4 +6,6 @@ public class FindAllBlogsParameters
     public string? SortBy { get; set; }
     public string? Category { get; set; }
     public string[]? Tags { get; set; }
+
+    public Guid? UserId { get; set; }
 }

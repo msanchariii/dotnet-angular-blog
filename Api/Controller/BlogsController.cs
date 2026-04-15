@@ -24,7 +24,7 @@ public class BlogsController : ControllerBase
     // }
 
     [HttpGet]
-    public async Task<ApiResponse<IEnumerable<FindBlogDto>>> GetAllBlogs([FromQuery] FindAllBlogsParameters @params)
+    public async Task<ApiResponse<IEnumerable<FindBlogWithBookmark>>> GetAllBlogs([FromQuery] FindAllBlogsParameters @params)
     {
         try
         {
@@ -32,11 +32,11 @@ public class BlogsController : ControllerBase
         }
         catch
         {
-            return new ApiResponse<IEnumerable<FindBlogDto>>
+            return new ApiResponse<IEnumerable<FindBlogWithBookmark>>
             {
                 Success = false,
                 Message = "Internal server error",
-                Data = Enumerable.Empty<FindBlogDto>(),
+                Data = Enumerable.Empty<FindBlogWithBookmark>(),
                 StatusCode = 500
             };
         }

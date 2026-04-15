@@ -40,7 +40,10 @@ export class BlogFeed {
   selectedTags: Tag[] = [];
 
   ngOnInit() {
-    this.blogService.findBlogs().subscribe((blogs) => (this.blogData = blogs));
+    this.blogService.findBlogs().subscribe((blogs) => {
+      console.log('Fetched blogs:', blogs);
+      this.blogData = blogs;
+    });
     this.categoryService
       .getAllCategories()
       .subscribe((categories) => (this.categories = categories));

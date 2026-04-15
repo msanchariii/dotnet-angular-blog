@@ -4,12 +4,16 @@ import { map, Observable } from 'rxjs';
 import { ApiResponse } from '../../model/ApiResponse';
 import { FindBlog, FindBlogExtended } from '../../model/FindBlog';
 import { CreateBlogRequest } from '../../model/create-blog-request';
+import { AuthService } from '../auth';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BlogService {
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+  ) {}
 
   createBlog(request: CreateBlogRequest): Observable<ApiResponse<any>> {
     return this.http.post<ApiResponse<any>>('/api/blogs', request);
@@ -93,5 +97,12 @@ export class BlogService {
       }
     });
     return Array.from(tagSet);
+  }
+
+  toggleBookmark(blogId: string, isBookmarked: boolean): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>('/api/bookmark/toggle', {
+      blogId,
+      userId: this.authService.getUserId(), // Replace with actual user ID from auth context
+    });
   }
 }

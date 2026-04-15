@@ -14,4 +14,5 @@ public class FindBlogDto
     public string[] Tags { get; set; } = [];
 
     public DateTime? CreatedAt { get; set; }
+    
 }

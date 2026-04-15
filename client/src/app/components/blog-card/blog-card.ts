@@ -16,7 +16,7 @@ const avatarColors = [
   styleUrl: './blog-card.css',
 })
 export class BlogCard {
-  @Input() author = 'Ayan Ghosh';
+  @Input() author = 'Sanchari Mandal';
   @Input() blogTitle = 'Into the sky';
   @Input() blogContent =
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
@@ -29,4 +29,5 @@ export class BlogCard {
   @Input() initials = '';
   @Input() readTime = '';
   @Input() blogId = '';
+  @Input() isBookmarked = false;
 }
