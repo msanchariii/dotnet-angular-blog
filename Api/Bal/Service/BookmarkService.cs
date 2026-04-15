@@ -1,10 +1,12 @@
 public class BookmarkService : IBookmarkService
 {
     private readonly IBookmarkRepository _bookmarkRepository;
+    private readonly ILogger<BookmarkService> _logger;
 
-    public BookmarkService(IBookmarkRepository bookmarkRepository)
+    public BookmarkService(IBookmarkRepository bookmarkRepository, ILogger<BookmarkService> logger)
     {
         _bookmarkRepository = bookmarkRepository;
+        _logger = logger;
     }
 
     public async Task<ApiResponse<object?>> ToggleBookmark(ToggleBookmarkRequestDto request)
@@ -21,12 +23,13 @@ public class BookmarkService : IBookmarkService
                 StatusCode = 200
             };
         }
-        catch
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "Error in ToggleBookmark: {Message}", ex.Message);
             return new ApiResponse<object?>
             {
                 Success = false,
-                Message = "Something went wrong",
+                Message = $"Something went wrong: {ex.Message}",
                 Data = null,
                 StatusCode = 500
             };

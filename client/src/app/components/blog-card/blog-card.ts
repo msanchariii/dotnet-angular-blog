@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { BookmarkButton } from '../bookmark-button/bookmark-button';
 
 const avatarColors = [
@@ -21,7 +21,6 @@ export class BlogCard {
   @Input() blogContent =
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
   @Input() category = 'Editorial';
-  // @Input() readTime = '4 min read';
   @Input() publishedAt = 'Apr 13, 2026';
   @Input() tags: string[] = ['Insight', 'Writing', 'Strategy'];
   @Input() accentClass = 'bg-slate-950';
@@ -30,4 +29,10 @@ export class BlogCard {
   @Input() readTime = '';
   @Input() blogId = '';
   @Input() isBookmarked = false;
+  @Output() bookmarkChanged = new EventEmitter<{ blogId: string; isBookmarked: boolean }>();
+
+  onBookmarkToggled(isBookmarked: boolean) {
+    this.isBookmarked = isBookmarked;
+    this.bookmarkChanged.emit({ blogId: this.blogId, isBookmarked });
+  }
 }

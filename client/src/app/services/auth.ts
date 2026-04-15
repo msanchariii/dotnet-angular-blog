@@ -16,6 +16,10 @@ export class AuthService {
 
   constructor(private http: HttpClient) {} // Injected here
 
+  private canUseStorage(): boolean {
+    return typeof globalThis !== 'undefined' && typeof globalThis.localStorage !== 'undefined';
+  }
+
   login(user: { password: string; email: string }) {
     return this.http
       .post<ApiResponse<LoginResponse>>(`${environment.apiUrl}/Auth/login`, {
@@ -25,8 +29,10 @@ export class AuthService {
       .pipe(
         tap((response) => {
           if (response.statusCode === 200 && response.success && response.data) {
-            localStorage.setItem(this.USER_ID_KEY, response.data.userId);
-            localStorage.setItem(this.USER_EMAIL_KEY, response.data.email);
+            if (this.canUseStorage()) {
+              localStorage.setItem(this.USER_ID_KEY, response.data.userId);
+              localStorage.setItem(this.USER_EMAIL_KEY, response.data.email);
+            }
           }
         }),
       );
@@ -49,19 +55,20 @@ export class AuthService {
   }
 
   getUserId(): string | null {
-    return localStorage.getItem(this.USER_ID_KEY);
+    return this.canUseStorage() ? localStorage.getItem(this.USER_ID_KEY) : null;
   }
 
   getUserEmail(): string | null {
-    return localStorage.getItem(this.USER_EMAIL_KEY);
+    return this.canUseStorage() ? localStorage.getItem(this.USER_EMAIL_KEY) : null;
   }
 
   clearUser() {
+    if (!this.canUseStorage()) return;
     localStorage.removeItem(this.USER_ID_KEY);
     localStorage.removeItem(this.USER_EMAIL_KEY);
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem(this.USER_ID_KEY);
+    return !!this.getUserId();
   }
 }

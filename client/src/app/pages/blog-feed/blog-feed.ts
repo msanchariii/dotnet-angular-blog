@@ -42,16 +42,27 @@ export class BlogFeed {
   ngOnInit() {
     this.blogService.findBlogs().subscribe((blogs) => {
       console.log('Fetched blogs:', blogs);
-      this.blogData = blogs;
+      setTimeout(() => {
+        this.blogData = blogs;
+      }, 0);
     });
-    this.categoryService
-      .getAllCategories()
-      .subscribe((categories) => (this.categories = categories));
+    this.categoryService.getAllCategories().subscribe((categories) => {
+      setTimeout(() => {
+        this.categories = categories;
+      }, 0);
+    });
 
     this.tags = [
       { name: 'Angular', id: 'angular' },
       { name: 'TypeScript', id: 'typescript' },
       { name: 'Web Development', id: 'web-development' },
     ];
+  }
+
+  onBookmarkChanged(event: { blogId: string; isBookmarked: boolean }) {
+    const blog = this.blogData.find((b) => b.blogId === event.blogId);
+    if (blog) {
+      blog.isBookmarked = event.isBookmarked;
+    }
   }
 }

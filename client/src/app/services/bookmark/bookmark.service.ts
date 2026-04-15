@@ -3,19 +3,40 @@ import { HttpClient } from '@angular/common/http';
 import { map, Observable, of } from 'rxjs';
 import { FindBlog } from '../../model/FindBlog';
 import { ApiResponse } from '../../model/ApiResponse';
+import { AuthService } from '../auth';
+import { ToggleBookmarkResponse } from '../../model/Bookmark';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BookmarkService {
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+  ) {}
+
+  toggleBookmark(blogId: string): Observable<ApiResponse<ToggleBookmarkResponse>> {
+    const userId = this.authService.getUserId();
+
+    if (!userId || !blogId) {
+      console.error('toggleBookmark: userId or blogId is missing', { userId, blogId });
+      return of({
+        success: false,
+        statusCode: 400,
+        message: 'User ID or Blog ID is missing',
+        data: null,
+      } as any);
+    }
+
+    return this.http.post<ApiResponse<ToggleBookmarkResponse>>('/api/bookmarks/toggle', {
+      userId,
+      blogId,
+    });
+  }
 
   getMyBookmarks(): Observable<FindBlog[]> {
-    // get userId from local storage
-    const userId = localStorage.getItem('userId');
+    const userId = this.authService.getUserId();
     if (!userId) {
-      // redirect to login page if userId is not found in local storage
-      window.location.href = '/login';
       return of([]);
     }
 

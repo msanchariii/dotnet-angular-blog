@@ -37,7 +37,11 @@
       }
     </div>
     <div class="flex items-center gap-4">
-      <app-bookmark-button [blogId]="blogId" [isBookmarked]="isBookmarked"></app-bookmark-button>
+      <app-bookmark-button
+        [blogId]="blogId"
+        [isBookmarked]="isBookmarked"
+        (bookmarkToggled)="onBookmarkToggled($event)"
+      ></app-bookmark-button>
       <a [href]="'/' + blogId">
         <button
           class="rounded-full cursor-pointer bg-purple-600 px-4 py-2 text-white transition hover:bg-purple-700 font-semibold"

@@ -20,7 +20,15 @@ export class BlogService {
   }
 
   findBlogs(): Observable<FindBlogExtended[]> {
-    return this.http.get<ApiResponse<FindBlog[]>>(`/api/blogs?pageSize=100`).pipe(
+    const userId = this.authService.getUserId();
+    console.log('Fetching Blogs For the user: ', userId);
+
+    const query = new URLSearchParams({ pageSize: '100' });
+    if (userId) {
+      query.set('userId', userId);
+    }
+
+    return this.http.get<ApiResponse<FindBlog[]>>(`/api/blogs?${query.toString()}`).pipe(
       map(
         (response) =>
           response.data?.map((blog) => ({
@@ -97,12 +105,5 @@ export class BlogService {
       }
     });
     return Array.from(tagSet);
-  }
-
-  toggleBookmark(blogId: string, isBookmarked: boolean): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>('/api/bookmark/toggle', {
-      blogId,
-      userId: this.authService.getUserId(), // Replace with actual user ID from auth context
-    });
   }
 }

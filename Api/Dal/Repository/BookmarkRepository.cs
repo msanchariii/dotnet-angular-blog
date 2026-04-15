@@ -13,9 +13,9 @@ public class BookmarkRepository : IBookmarkRepository
     {
         using var connection = _context.CreateConnection();
 
-        var existsQuery = @"SELECT 1
-                            FROM bookmarks
-                            WHERE user_id = @UserId AND blog_id = @BlogId";
+            var existsQuery = @"SELECT 1
+                                FROM bookmark
+                                WHERE user_id = @UserId AND blog_id = @BlogId";
 
         var exists = await connection.QueryFirstOrDefaultAsync<int?>(
             existsQuery,
@@ -24,16 +24,16 @@ public class BookmarkRepository : IBookmarkRepository
 
         if (exists.HasValue)
         {
-            var deleteQuery = @"DELETE FROM bookmarks
-                                WHERE user_id = @UserId AND blog_id = @BlogId";
+                var deleteQuery = @"DELETE FROM bookmark
+                                    WHERE user_id = @UserId AND blog_id = @BlogId";
 
             await connection.ExecuteAsync(deleteQuery, new { UserId = userId, BlogId = blogId });
             return false;
         }
 
-        var insertQuery = @"INSERT INTO bookmarks (user_id, blog_id)
-                            VALUES (@UserId, @BlogId)
-                            ON CONFLICT DO NOTHING";
+            var insertQuery = @"INSERT INTO bookmark (user_id, blog_id)
+                                VALUES (@UserId, @BlogId)
+                                ON CONFLICT DO NOTHING";
 
         await connection.ExecuteAsync(insertQuery, new { UserId = userId, BlogId = blogId });
         return true;
@@ -49,7 +49,7 @@ public class BookmarkRepository : IBookmarkRepository
                              b.category_id AS CategoryId,
                              COALESCE(array_agg(t.tag_name) FILTER (WHERE t.tag_name IS NOT NULL), ARRAY[]::text[]) AS Tags,
                              b.created_at AS CreatedAt
-                      FROM bookmarks bm
+                    FROM bookmark bm
                       INNER JOIN blogs b ON b.id = bm.blog_id
                       LEFT JOIN tag_blog tb ON tb.blog_id = b.id
                       LEFT JOIN tag t ON t.id = tb.tag_id
