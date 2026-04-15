@@ -1,0 +1,44 @@
+<div id="register-form-container">
+  <form class="bg-white" (ngSubmit)="register()">
+    <h1 class="text-2xl font-semibold text-center">Register</h1>
+
+    <label for="firstName">First Name</label>
+    <input type="text" id="firstName" pInputText [(ngModel)]="firstName" name="firstName" />
+
+    <label for="lastName">Last Name</label>
+    <input type="text" id="lastName" pInputText [(ngModel)]="lastName" name="lastName" />
+
+    <label for="email">Email</label>
+    <input type="text" id="email" pInputText [(ngModel)]="email" name="email" />
+
+    <label for="password">Password</label>
+    <p-password
+      [(ngModel)]="password"
+      name="password"
+      [toggleMask]="true"
+      id="password"
+      autocomplete="off"
+      [fluid]="true"
+    />
+
+    <label for="confirmPassword">Confirm Password</label>
+    <p-password
+      [(ngModel)]="confirmPassword"
+      name="confirmPassword"
+      [toggleMask]="true"
+      id="confirmPassword"
+      autocomplete="off"
+      [fluid]="true"
+      [feedback]="false"
+    />
+
+    <p-button [fluid]="true" class="w-full" label="Register" type="submit" [disabled]="isLoading" />
+
+    <p class="text-center text-red-500" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <p class="text-center">
+      Already have an account?
+      <a routerLink="/login" class="text-purple-500 hover:underline">Login</a>
+    </p>
+  </form>
+</div>

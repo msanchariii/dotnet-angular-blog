@@ -1,0 +1,65 @@
+<div class="flex flex-col bg-purple-100 py-24 px-8">
+  <aside class="grid w-full grid-cols-1 md:grid-cols-4 max-w-5xl mx-auto gap-4">
+    <!-- Sort By -->
+    <div class="flex w-full min-w-0 flex-col gap-2">
+      <label for="sort" class="text-purple-900 font-semibold text-lg">Sort By</label>
+      <p-select
+        class="w-full"
+        [options]="sortBy"
+        [(ngModel)]="selectedSort"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Select Sort Order"
+        [fluid]="true"
+      />
+    </div>
+    <!-- Category -->
+    <div class="flex w-full min-w-0 flex-col gap-2">
+      <label for="category" class="text-purple-900 font-semibold text-lg">Category</label>
+      <p-select
+        class="w-full"
+        [options]="categories"
+        [(ngModel)]="selectedCategory"
+        optionLabel="categoryName"
+        placeholder="Select a Category"
+        [fluid]="true"
+      />
+    </div>
+    <!-- Tags -->
+    <div class="flex w-full min-w-0 flex-col gap-2">
+      <label for="category" class="text-purple-900 font-semibold text-lg">Tags</label>
+      <p-multiselect
+        class="w-full"
+        [options]="tags"
+        [(ngModel)]="selectedTags"
+        optionLabel="name"
+        placeholder="Select Tags"
+        [maxSelectedLabels]="3"
+        [fluid]="true"
+      />
+    </div>
+    <!-- button -->
+    <button
+      class="bg-purple-600 w-full text-white py-2 px-4 h-10 self-end font-semibold rounded hover:bg-purple-700"
+    >
+      Apply Filters
+    </button>
+  </aside>
+  <main>
+    <div>
+      @for (blog of blogData; track blog) {
+        <app-blog-card
+          [blogTitle]="blog.title"
+          [blogContent]="blog.content"
+          [category]="blog.categoryName"
+          [author]="blog.authorName"
+          [tags]="blog.tags"
+          [avatarColor]="blog.avatarColor"
+          [initials]="blog.initials"
+          [readTime]="blog.readTime"
+          [blogId]="blog.blogId"
+        ></app-blog-card>
+      }
+    </div>
+  </main>
+</div>

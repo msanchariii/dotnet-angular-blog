@@ -1,0 +1,32 @@
+import { Component, Input } from '@angular/core';
+import { BookmarkButton } from '../bookmark-button/bookmark-button';
+
+const avatarColors = [
+  'bg-yellow-500',
+  'bg-green-400',
+  'bg-blue-500',
+  'bg-red-400',
+  'bg-purple-500',
+];
+
+@Component({
+  selector: 'app-blog-card',
+  imports: [BookmarkButton],
+  templateUrl: './blog-card.html',
+  styleUrl: './blog-card.css',
+})
+export class BlogCard {
+  @Input() author = 'Ayan Ghosh';
+  @Input() blogTitle = 'Into the sky';
+  @Input() blogContent =
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
+  @Input() category = 'Editorial';
+  // @Input() readTime = '4 min read';
+  @Input() publishedAt = 'Apr 13, 2026';
+  @Input() tags: string[] = ['Insight', 'Writing', 'Strategy'];
+  @Input() accentClass = 'bg-slate-950';
+  @Input() avatarColor = 'bg-slate-900';
+  @Input() initials = '';
+  @Input() readTime = '';
+  @Input() blogId = '';
+}

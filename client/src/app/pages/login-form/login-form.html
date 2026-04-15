@@ -1,0 +1,27 @@
+<div id="login-form-container">
+  <form class="bg-white" (ngSubmit)="login()">
+    <h1 class="text-2xl font-semibold text-center">Login</h1>
+
+    <label for="email">Email</label>
+    <input type="text" id="email" pInputText [(ngModel)]="email" name="email" />
+
+    <label for="password">Password</label>
+    <p-password
+      [(ngModel)]="password"
+      name="password"
+      [toggleMask]="true"
+      id="password"
+      autocomplete="off"
+      [fluid]="true"
+    />
+
+    <p-button [fluid]="true" class="w-full" label="Login" type="submit" [disabled]="isLoading" />
+
+    <p class="text-center text-red-500" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <p class="text-center">
+      Don't have an account?
+      <a routerLink="/register" class="text-purple-500 hover:underline"> Sign up </a>
+    </p>
+  </form>
+</div>

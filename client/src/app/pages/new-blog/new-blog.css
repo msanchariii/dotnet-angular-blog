@@ -1,0 +1,37 @@
+@reference "tailwindcss";
+
+#new-blog-form {
+  @apply bg-white p-6 rounded-xl  shadow-sm w-full max-w-3xl mx-auto mt-16 space-y-5 border border-slate-100;
+}
+
+#new-blog-form h1 {
+  @apply text-3xl font-bold tracking-tight text-slate-900;
+}
+
+.field {
+  @apply flex flex-col gap-2;
+}
+
+.field label {
+  @apply text-sm font-semibold text-slate-700;
+}
+
+.tags-wrap {
+  @apply flex flex-wrap gap-2;
+}
+
+.tag-chip {
+  @apply bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide;
+}
+
+.hint {
+  @apply text-sm text-slate-500;
+}
+
+.error {
+  @apply text-sm font-medium text-red-600;
+}
+
+.success {
+  @apply text-sm font-medium text-green-600;
+}

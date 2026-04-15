@@ -1,0 +1,1 @@
+dotnet ef dbcontext scaffold "Name=ConnectionStrings:DefaultConnection" Npgsql.EntityFrameworkCore.PostgreSQL -c DbContext --context-dir Dal/Helper -o Dal/Entities --data-annotations --table public.tag_blog --table public.blogs --table public.users --table public.tag --table public.category

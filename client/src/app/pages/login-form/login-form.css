@@ -1,0 +1,12 @@
+@reference "tailwindcss";
+
+form {
+  @apply flex flex-col gap-4 border border-gray-300 p-4 md:p-8  w-full max-w-md rounded-lg shadow;
+}
+input {
+  @apply w-full;
+}
+
+#login-form-container {
+  @apply w-full min-h-svh flex items-center justify-center bg-linear-to-br from-pink-200 via-purple-400 to-indigo-600;
+}
