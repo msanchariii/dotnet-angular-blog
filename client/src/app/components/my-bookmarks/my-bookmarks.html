@@ -1,1 +1,21 @@
-<p>my-bookmarks works!</p>
+<div class="flex flex-col bg-purple-100 py-24 px-8">
+  <main>
+    <div>
+      <ng-container *ngFor="let blog of blogData; trackBy: trackByBlogId">
+        <app-blog-card
+          [blogTitle]="blog.title"
+          [blogContent]="blog.content"
+          [category]="blog.categoryName"
+          [author]="blog.authorName"
+          [tags]="blog.tags"
+          [avatarColor]="blog.avatarColor"
+          [initials]="blog.initials"
+          [readTime]="blog.readTime"
+          [blogId]="blog.blogId"
+          [isBookmarked]="blog.isBookmarked"
+          (bookmarkChanged)="onBookmarkChanged($event)"
+        ></app-blog-card>
+      </ng-container>
+    </div>
+  </main>
+</div>

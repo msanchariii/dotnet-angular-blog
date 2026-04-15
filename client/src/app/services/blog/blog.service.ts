@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { map, Observable, of } from 'rxjs';
 import { ApiResponse } from '../../model/ApiResponse';
 import { FindBlog, FindBlogExtended } from '../../model/FindBlog';
 import { CreateBlogRequest } from '../../model/create-blog-request';
@@ -53,6 +53,27 @@ export class BlogService {
           initials: this.getInitials(blog.authorName),
         };
       }),
+    );
+  }
+
+  getMyBookmarks(): Observable<FindBlogExtended[]> {
+    const userId = this.authService.getUserId();
+
+    if (!userId) {
+      return of([]);
+    }
+
+    return this.http.get<ApiResponse<FindBlog[]>>(`/api/bookmarks?userId=${userId}`).pipe(
+      map(
+        (response) =>
+          response.data?.map((blog) => ({
+            ...blog,
+            isBookmarked: true,
+            readTime: this.getReadTime(blog.content),
+            avatarColor: this.getAvatarColor(blog.authorName),
+            initials: this.getInitials(blog.authorName),
+          })) ?? [],
+      ),
     );
   }
 

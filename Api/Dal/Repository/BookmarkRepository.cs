@@ -44,17 +44,21 @@ public class BookmarkRepository : IBookmarkRepository
         using var connection = _context.CreateConnection();
         var query = @"SELECT b.id AS BlogId,
                              b.author AS UserId,
+                             u.first_name || ' ' || u.last_name AS AuthorName,
                              b.blog_title AS Title,
                              b.blog_content AS Content,
                              b.category_id AS CategoryId,
-                             COALESCE(array_agg(t.tag_name) FILTER (WHERE t.tag_name IS NOT NULL), ARRAY[]::text[]) AS Tags,
+                             c.category_name AS CategoryName,
+                             COALESCE(array_agg(DISTINCT t.tag_name) FILTER (WHERE t.tag_name IS NOT NULL), ARRAY[]::text[]) AS Tags,
                              b.created_at AS CreatedAt
                     FROM bookmark bm
                       INNER JOIN blogs b ON b.id = bm.blog_id
                       LEFT JOIN tag_blog tb ON tb.blog_id = b.id
                       LEFT JOIN tag t ON t.id = tb.tag_id
+                      LEFT JOIN users u ON u.id = b.author AND u.is_deleted = false
+                      LEFT JOIN category c ON c.id = b.category_id
                       WHERE bm.user_id = @UserId AND b.is_deleted = false
-                      GROUP BY b.id, b.author, b.blog_title, b.blog_content, b.category_id, b.created_at
+                      GROUP BY b.id, b.author, b.blog_title, b.blog_content, b.category_id, b.created_at, u.first_name, u.last_name, c.category_name
                       ORDER BY b.created_at DESC";
 
         return await connection.QueryAsync<FindBlogDto>(query, new { UserId = userId });
