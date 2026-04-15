@@ -16,6 +16,12 @@
   margin-top: 32px;
 }
 
+.bookmarked-card {
+  border-color: rgba(244, 114, 182, 0.35);
+  background: #ffffff;
+  box-shadow: 0 18px 50px rgba(244, 114, 182, 0.12);
+}
+
 .avatar {
   display: flex;
   height: 3.5rem;

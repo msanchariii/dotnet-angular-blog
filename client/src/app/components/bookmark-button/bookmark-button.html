@@ -1,6 +1,9 @@
 <button
   type="button"
-  class="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm transition-all hover:scale-110 active:scale-95 border border-slate-200 cursor-pointer"
+  class="flex h-10 w-10 items-center justify-center rounded-full shadow-sm transition-all hover:scale-110 active:scale-95 border cursor-pointer"
+  [class.bg-white]="!isBookmarked"
+  [class.border-slate-200]="!isBookmarked"
+  [class.border-pink-200]="isBookmarked"
   [attr.aria-label]="isBookmarked ? 'Remove bookmark' : 'Add bookmark'"
   (click)="handleBookmarkClick()"
 >
@@ -12,7 +15,10 @@
     stroke-width="2"
     stroke-linecap="round"
     stroke-linejoin="round"
-    [class]="isBookmarked ? 'fill-rose-600 stroke-rose-600' : 'fill-slate-600 stroke-slate-600'"
+    [class.fill-rose-600]="isBookmarked"
+    [class.stroke-rose-600]="isBookmarked"
+    [class.fill-slate-600]="!isBookmarked"
+    [class.stroke-slate-600]="!isBookmarked"
   >
     <path
       d="M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z"

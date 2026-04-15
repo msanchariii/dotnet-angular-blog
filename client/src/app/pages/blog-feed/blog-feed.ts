@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { BlogCard } from '../../components/blog-card/blog-card';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
@@ -23,6 +23,7 @@ export class BlogFeed {
   constructor(
     private blogService: BlogService,
     private categoryService: CategoryService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   blogData: FindBlogExtended[] = [];
@@ -42,14 +43,12 @@ export class BlogFeed {
   ngOnInit() {
     this.blogService.findBlogs().subscribe((blogs) => {
       console.log('Fetched blogs:', blogs);
-      setTimeout(() => {
-        this.blogData = blogs;
-      }, 0);
+      this.blogData = blogs;
+      this.cdr.detectChanges();
     });
     this.categoryService.getAllCategories().subscribe((categories) => {
-      setTimeout(() => {
-        this.categories = categories;
-      }, 0);
+      this.categories = categories;
+      this.cdr.detectChanges();
     });
 
     this.tags = [
