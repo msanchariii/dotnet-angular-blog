@@ -126,17 +126,21 @@ public async Task<IEnumerable<FindBlogDto>> GetBlogsByUser(Guid userId)
         using var connection = _context.CreateConnection();
         var query = @"SELECT b.id AS BlogId,
                              b.author AS UserId,
+                             u.first_name || ' ' || u.last_name AS AuthorName,
                              b.blog_title AS Title,
                              b.is_published AS IsPublished,
                              b.blog_content AS Content,
                              b.category_id AS CategoryId,
+                             c.category_name AS CategoryName,
                              COALESCE(array_agg(t.tag_name) FILTER (WHERE t.tag_name IS NOT NULL), ARRAY[]::text[]) AS Tags,
                              b.created_at AS CreatedAt
                       FROM blogs b
+                      LEFT JOIN users u ON u.id = b.author
+                      LEFT JOIN category c ON c.id = b.category_id
                       LEFT JOIN tag_blog tb ON tb.blog_id = b.id
                       LEFT JOIN tag t ON t.id = tb.tag_id
                       WHERE b.author = @UserId AND b.is_deleted = false
-                      GROUP BY b.id, b.author, b.blog_title, b.blog_content, b.category_id, b.created_at
+                      GROUP BY b.id, b.author, u.first_name, u.last_name, b.blog_title, b.blog_content, b.category_id, c.category_name, b.created_at
                       ORDER BY b.created_at DESC";
 
         return await connection.QueryAsync<FindBlogDto>(query, new { UserId = userId });

@@ -22,6 +22,7 @@ export class BlogCard {
   @Input() blogId = '';
   @Input() isBookmarked = false;
   @Input() isPublished: boolean | null | undefined;
+  @Input() showBookmarkButton = true;
   @Output() bookmarkChanged = new EventEmitter<{ blogId: string; isBookmarked: boolean }>();
 
   onBookmarkToggled(isBookmarked: boolean) {

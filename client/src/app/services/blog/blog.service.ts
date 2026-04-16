@@ -41,7 +41,7 @@ export class BlogService {
     );
   }
 
-  findMyBlogs(): Observable<FindBlogExtended[]> {
+  getMyBlogs(): Observable<FindBlogExtended[]> {
     const userId = this.authService.getUserId();
     if (!userId) {
       return of([]);
