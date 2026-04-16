@@ -10,6 +10,7 @@ export interface FindBlog {
   createdAt: Date;
   isBookmarked: boolean;
   isPublished?: boolean;
+  totalRecords?: number;
 }
 
 export interface FindBlogExtended extends FindBlog {

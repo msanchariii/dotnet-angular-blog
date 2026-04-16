@@ -74,11 +74,11 @@
   </main>
   <div class="card flex justify-center">
     <p-paginator
-      (onPageChange)=""
-      [first]="1"
-      [rows]="3"
-      [totalRecords]="120"
-      [rowsPerPageOptions]="[10, 20, 30]"
+      (onPageChange)="onPageChange($event)"
+      [first]="first"
+      [rows]="rows"
+      [totalRecords]="totalRecords"
+      [rowsPerPageOptions]="[5, 10, 20, 50, 100]"
     />
   </div>
 </div>

@@ -8,8 +8,7 @@ import { FindBlogExtended } from '../../model/FindBlog';
 import { FindCategory } from '../../model/FindCategory';
 import { CategoryService } from '../../services/category/category.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Paginator, PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { first } from 'rxjs';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 
 interface Tag {
   name: string;
@@ -34,6 +33,9 @@ export class BlogFeed {
   blogData: FindBlogExtended[] = [];
   categories: FindCategory[] = [];
   selectedCategoryId: string | undefined;
+  first = 0;
+  rows: 5 | 10 | 20 | 50 | 100 = 10;
+  totalRecords = 0;
 
   sortBy = [
     { label: 'Newest First', value: 'newest' },
@@ -56,19 +58,24 @@ export class BlogFeed {
       const categoryId = params.get('categoryId');
       const pageNo = params.get('pageNo');
       const pageSize = params.get('pageSize');
+      const parsedPageNo = this.parsePageNo(pageNo);
+      const parsedPageSize = this.parsePageSize(pageSize);
 
       this.selectedSort = sortBy === 'oldest' ? 'oldest' : 'newest';
       this.selectedCategoryId = categoryId ?? undefined;
+      this.rows = parsedPageSize;
+      this.first = ((parsedPageNo ?? 1) - 1) * parsedPageSize;
 
       this.blogService
         .findBlogs({
-          PageSize: this.parsePageSize(pageSize),
-          PageNo: this.parsePageNo(pageNo),
+          PageSize: parsedPageSize,
+          PageNo: parsedPageNo,
           SortBy: this.selectedSort,
           CategoryId: this.selectedCategoryId,
         })
         .subscribe((blogs) => {
           this.blogData = blogs;
+          this.totalRecords = blogs[0]?.totalRecords ?? blogs.length;
           this.cdr.detectChanges();
         });
     });
@@ -86,12 +93,32 @@ export class BlogFeed {
       queryParams: {
         sortBy: this.selectedSort,
         categoryId: this.selectedCategoryId || null,
+        pageNo: 1,
+        pageSize: this.rows,
       },
       queryParamsHandling: 'merge',
     });
   }
 
-  private parsePageNo(pageNo: string | null): Number | undefined {
+  onPageChange(event: PaginatorState) {
+    const nextRows = this.parsePageSize(event.rows?.toString() ?? null);
+    const nextFirst = event.first ?? 0;
+    const nextPageNo = Math.floor(nextFirst / nextRows) + 1;
+
+    this.first = nextFirst;
+    this.rows = nextRows;
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        pageNo: nextPageNo,
+        pageSize: nextRows,
+      },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  private parsePageNo(pageNo: string | null): number | undefined {
     if (!pageNo) {
       return undefined;
     }

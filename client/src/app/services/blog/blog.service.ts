@@ -21,7 +21,7 @@ export class BlogService {
 
   findBlogs(params?: {
     PageSize?: 5 | 10 | 20 | 50 | 100;
-    PageNo?: Number;
+    PageNo?: number;
     SortBy?: 'newest' | 'oldest' | 'popular';
     CategoryId?: string;
   }): Observable<FindBlogExtended[]> {
@@ -30,7 +30,7 @@ export class BlogService {
 
     const query = new URLSearchParams({ pageSize: params?.PageSize?.toString() ?? '10' });
     if (params?.PageNo) {
-      query.set('PageNo', params.PageNo.toString());
+      query.set('PageNumber', params.PageNo.toString());
     }
     if (params?.SortBy) {
       query.set('SortBy', params.SortBy);

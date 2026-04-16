@@ -46,6 +46,8 @@ public class BlogRepository : IBlogRepository
 
             b.created_at AS CreatedAt,
 
+            COUNT(*) OVER() AS TotalRecords,
+
             -- BOOKMARK
             CASE 
                 WHEN bm.user_id IS NOT NULL THEN true
