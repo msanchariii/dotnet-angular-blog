@@ -2,9 +2,8 @@
 @reference "tailwindcss";
 
 main {
-  padding: 32px;
   background-color: oklch(82.7% 0.119 306.383);
-  @apply min-h-screen w-full p-6;
+  @apply min-h-screen w-full p-6 lg:p-12;
 }
 
 .poppins-thin {

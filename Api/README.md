@@ -111,7 +111,7 @@ Category:
 
 [x] back button
 [x] is_published
-My Blogs Page
+[x] My Blogs Page
 [x] is_published er badge in My Blogs
 [x] navbar fixed
 [x] input field red ta bondho korbo =====> Navigated to Feed
