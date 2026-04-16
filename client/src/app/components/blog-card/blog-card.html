@@ -55,6 +55,7 @@
     <div class="flex items-center gap-4">
       @if (showBookmarkButton) {
         <app-bookmark-button
+          [blogId]="blogId"
           [isBookmarked]="isBookmarked"
           (bookmarkToggled)="onBookmarkToggled($event)"
         ></app-bookmark-button>

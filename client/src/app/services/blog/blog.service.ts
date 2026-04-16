@@ -19,11 +19,26 @@ export class BlogService {
     return this.http.post<ApiResponse<any>>('/api/blogs', request);
   }
 
-  findBlogs(): Observable<FindBlogExtended[]> {
+  findBlogs(params?: {
+    PageSize?: 5 | 10 | 20 | 50 | 100;
+    PageNo?: Number;
+    SortBy?: 'newest' | 'oldest' | 'popular';
+    CategoryId?: string;
+  }): Observable<FindBlogExtended[]> {
     const userId = this.authService.getUserId();
     // console.log('Fetching Blogs For the user: ', userId);
 
-    const query = new URLSearchParams({ pageSize: '100' });
+    const query = new URLSearchParams({ pageSize: params?.PageSize?.toString() ?? '10' });
+    if (params?.PageNo) {
+      query.set('pageNo', params.PageNo.toString());
+    }
+    if (params?.SortBy) {
+      query.set('sortBy', params.SortBy);
+    }
+    if (params?.CategoryId) {
+      query.set('categoryId', params.CategoryId);
+    }
+
     if (userId) {
       query.set('userId', userId);
     }
