@@ -8,6 +8,8 @@ import { FindBlogExtended } from '../../model/FindBlog';
 import { FindCategory } from '../../model/FindCategory';
 import { CategoryService } from '../../services/category/category.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Paginator, PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { first } from 'rxjs';
 
 interface Tag {
   name: string;
@@ -16,7 +18,7 @@ interface Tag {
 
 @Component({
   selector: 'app-blog-feed',
-  imports: [BlogCard, FormsModule, SelectModule, MultiSelectModule],
+  imports: [BlogCard, FormsModule, SelectModule, MultiSelectModule, PaginatorModule],
   templateUrl: './blog-feed.html',
   styleUrl: './blog-feed.css',
 })
@@ -112,6 +114,7 @@ export class BlogFeed {
     const blog = this.blogData.find((b) => b.blogId === event.blogId);
     if (blog) {
       blog.isBookmarked = event.isBookmarked;
+      this.cdr.detectChanges();
     }
   }
 }

@@ -10,10 +10,11 @@ import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
 import { finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { EditorModule } from 'primeng/editor';
 
 @Component({
   selector: 'app-new-blog',
-  imports: [InputTextModule, FormsModule, ButtonModule, SelectModule, TextareaModule],
+  imports: [InputTextModule, FormsModule, ButtonModule, SelectModule, TextareaModule, EditorModule],
   templateUrl: './new-blog.html',
   styleUrl: './new-blog.css',
 })

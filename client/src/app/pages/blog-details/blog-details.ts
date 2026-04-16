@@ -1,7 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { BlogService } from '../../services/blog/blog.service';
 import { FindBlog } from '../../model/FindBlog';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-blog-details',
@@ -9,10 +9,14 @@ import { RouterLink } from '@angular/router';
   templateUrl: './blog-details.html',
   styleUrl: './blog-details.css',
 })
-export class BlogDetails {
-  constructor(private blogService: BlogService) {}
+export class BlogDetails implements OnInit {
+  constructor(
+    private blogService: BlogService,
+    private activateRoute: ActivatedRoute,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
-  @Input() blogid!: string; // Automatically populated from the URL
+  blogid!: string; // Automatically populated from the URL
   protected blog: FindBlog | null = null;
   private isLoading: boolean = true;
   protected readTime: string = '';
@@ -22,22 +26,27 @@ export class BlogDetails {
   protected readonly tags = ['layout', 'hierarchy', 'readability', 'tailwind'];
 
   ngOnInit() {
-    this.blogService.findBlogById(this.blogid).subscribe({
-      next: (blog) => {
-        this.blog = blog;
-        this.isLoading = false;
-        if (this.blog) {
-          this.publishedAt = this.blogService.formatCreatedAt(this.blog.createdAt);
-          this.readTime = this.blogService.getReadTime(this.blog.content);
-          this.avatarColor = this.blogService.getAvatarColor(this.blog.authorName);
-          this.initials = this.blogService.getInitials(this.blog.authorName);
-        }
-      },
-      error: (err) => {
-        console.error('Error fetching blog details:', err);
-        this.isLoading = false;
-      },
-    });
+    this.blogid = this.activateRoute.snapshot.paramMap.get('blogid') || '';
+    if (this.blogid) {
+      this.blogService.findBlogById(this.blogid).subscribe({
+        next: (blog) => {
+          this.blog = blog;
+          console.log(this.blog);
+          this.isLoading = false;
+          if (this.blog) {
+            this.publishedAt = this.blogService.formatCreatedAt(this.blog.createdAt);
+            this.readTime = this.blogService.getReadTime(this.blog.content);
+            this.avatarColor = this.blogService.getAvatarColor(this.blog.authorName);
+            this.initials = this.blogService.getInitials(this.blog.authorName);
+          }
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error fetching blog details:', err);
+          this.isLoading = false;
+        },
+      });
+    }
   }
 
   // protected readonly takeaways = [

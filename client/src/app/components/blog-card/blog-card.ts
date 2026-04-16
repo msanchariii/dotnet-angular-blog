@@ -1,5 +1,6 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { BookmarkButton } from '../bookmark-button/bookmark-button';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-blog-card',
@@ -8,6 +9,7 @@ import { BookmarkButton } from '../bookmark-button/bookmark-button';
   styleUrl: './blog-card.css',
 })
 export class BlogCard {
+  private router = inject(Router);
   @Input() author = 'Sanchari Mandal';
   @Input() blogTitle = 'Into the sky';
   @Input() blogContent =
@@ -28,5 +30,9 @@ export class BlogCard {
   onBookmarkToggled(isBookmarked: boolean) {
     this.isBookmarked = isBookmarked;
     this.bookmarkChanged.emit({ blogId: this.blogId, isBookmarked });
+  }
+
+  viewBlog(blogId: string) {
+    this.router.navigate(['/blog', blogId]);
   }
 }

@@ -72,4 +72,13 @@
       }
     </div>
   </main>
+  <div class="card flex justify-center">
+    <p-paginator
+      (onPageChange)=""
+      [first]="1"
+      [rows]="3"
+      [totalRecords]="120"
+      [rowsPerPageOptions]="[10, 20, 30]"
+    />
+  </div>
 </div>

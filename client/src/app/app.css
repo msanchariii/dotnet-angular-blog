@@ -121,3 +121,19 @@ main {
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
 }
+
+.quill h1 {
+  @apply text-3xl font-bold mt-6 mb-4;
+}
+
+.quill h2 {
+  @apply text-2xl font-semibold mt-5 mb-3;
+}
+
+.quill ul {
+  @apply list-disc list-inside mt-4 mb-4;
+}
+
+.quill ol {
+  @apply list-decimal list-inside mt-4 mb-4;
+}

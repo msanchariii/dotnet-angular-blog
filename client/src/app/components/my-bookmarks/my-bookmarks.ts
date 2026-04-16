@@ -1,22 +1,15 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { NgFor } from '@angular/common';
 import { BlogCard } from '../blog-card/blog-card';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { BlogService } from '../../services/blog/blog.service';
 import { FindBlogExtended } from '../../model/FindBlog';
-import { FindCategory } from '../../model/FindCategory';
-import { CategoryService } from '../../services/category/category.service';
-
-interface Tag {
-  name: string;
-  id: string;
-}
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-my-bookmarks',
-  imports: [BlogCard, FormsModule, SelectModule, MultiSelectModule, NgFor],
+  imports: [BlogCard, FormsModule, SelectModule, MultiSelectModule],
   templateUrl: './my-bookmarks.html',
   styleUrl: './my-bookmarks.css',
 })
@@ -24,6 +17,7 @@ export class MyBookmarks {
   constructor(
     private blogService: BlogService,
     private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute,
   ) {}
 
   blogData: FindBlogExtended[] = [];
@@ -31,8 +25,6 @@ export class MyBookmarks {
   ngOnInit() {
     this.blogService.getMyBookmarks().subscribe((blogs) => {
       this.blogData = blogs;
-      // console.log('Bookmarks:', blogs);
-
       this.cdr.detectChanges();
     });
   }
@@ -48,9 +40,5 @@ export class MyBookmarks {
     if (blog) {
       blog.isBookmarked = event.isBookmarked;
     }
-  }
-
-  trackByBlogId(_: number, blog: FindBlogExtended) {
-    return blog.blogId;
   }
 }

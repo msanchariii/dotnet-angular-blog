@@ -39,7 +39,7 @@ export const routes: Routes = [
         title: 'My Blogs',
       },
       {
-        path: ':blogid',
+        path: 'blog/:blogid',
         component: BlogDetails,
         title: 'Blog Details',
       },

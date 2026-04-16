@@ -77,6 +77,8 @@ export class BlogService {
   findBlogById(blogId: string): Observable<FindBlogExtended | null> {
     return this.http.get<ApiResponse<FindBlog>>(`/api/blogs/${blogId}`).pipe(
       map((response) => {
+        console.log(response);
+
         const blog = response.data;
         if (!blog) return null;
         return {

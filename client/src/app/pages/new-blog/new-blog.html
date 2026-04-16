@@ -35,7 +35,17 @@
 
     <div class="field">
       <label for="content">Content</label>
-      <textarea
+      <p-editor
+        id="content"
+        name="content"
+        [(ngModel)]="content"
+        placeholder="Write your blog. Use #hashtags to auto-generate tags"
+        required
+        [disabled]="isSubmitting"
+        (ngModelChange)="onContentChange()"
+        [style]="{ height: '320px' }"
+      ></p-editor>
+      <!-- <textarea
         id="content"
         pInputTextarea
         name="content"
@@ -46,7 +56,7 @@
         required
         [disabled]="isSubmitting"
         (ngModelChange)="onContentChange()"
-      ></textarea>
+      ></textarea> -->
     </div>
 
     <div class="field">
