@@ -112,6 +112,10 @@ export class BlogService {
     );
   }
 
+  deleteBlog(blogId: string): Observable<ApiResponse<any>> {
+    return this.http.delete<ApiResponse<any>>(`/api/blogs/${blogId}`);
+  }
+
   getInitials(author: string): string {
     const names = author.trim().split(/\s+/);
     return names

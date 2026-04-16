@@ -122,18 +122,21 @@ main {
   font-family: 'Poppins', sans-serif;
 }
 
-.quill h1 {
-  @apply text-3xl font-bold mt-6 mb-4;
+:host ::ng-deep .quill h1 {
+  font-size: 30px;
+  font-weight: 700;
+  margin-top: 24px;
+  margin-bottom: 16px;
 }
 
-.quill h2 {
+:host ::ng-deep .quill h2 {
   @apply text-2xl font-semibold mt-5 mb-3;
 }
 
-.quill ul {
+:host ::ng-deep .quill ul {
   @apply list-disc list-inside mt-4 mb-4;
 }
 
-.quill ol {
+:host ::ng-deep .quill ol {
   @apply list-decimal list-inside mt-4 mb-4;
 }
