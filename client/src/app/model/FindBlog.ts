@@ -9,6 +9,7 @@ export interface FindBlog {
   tags: string[];
   createdAt: Date;
   isBookmarked: boolean;
+  isPublished?: boolean;
 }
 
 export interface FindBlogExtended extends FindBlog {

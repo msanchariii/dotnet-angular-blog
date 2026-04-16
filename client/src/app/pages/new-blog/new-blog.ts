@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, OnInit, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit, PLATFORM_ID, Inject, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -9,6 +9,7 @@ import { CategoryService } from '../../services/category/category.service';
 import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
 import { finalize } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-new-blog',
@@ -23,6 +24,8 @@ export class NewBlog implements OnInit {
     private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: object, // 👈 inject platform id
   ) {}
+
+  private readonly router: Router = inject(Router);
 
   userId: string | null = null; // 👈 no longer read localStorage here
   title: string = '';
@@ -62,6 +65,7 @@ export class NewBlog implements OnInit {
   }
 
   submitBlog() {
+    // on success, push to blog list page
     if (this.isSubmitting) {
       return;
     }
@@ -103,6 +107,9 @@ export class NewBlog implements OnInit {
             this.content = '';
             this.categoryId = '';
             this.tags = [];
+
+            // Redirect to blog list page on success
+            this.router.navigate(['/']);
 
             return;
           }

@@ -110,10 +110,11 @@ Category:
 - slug
 
 [x] back button
-is_published
-My Blogs + is_published er badge
+[x] is_published
+My Blogs Page
+is_published er badge in My Blogs
 [x] navbar fixed
-input field red ta bondho korbo
-add toaster
+[x] input field red ta bondho korbo =====> Navigated to Feed
+[x] add toaster
 [x] bookmark outline -> filled
 [x] Publish -> Submit Blog

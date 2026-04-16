@@ -35,6 +35,9 @@ public partial class Blog
     [Column("category_id")]
     public Guid? CategoryId { get; set; }
 
+    [Column("is_published")]
+    public bool IsPublished { get; set; }
+
     [ForeignKey("Author")]
     [InverseProperty("Blogs")]
     public virtual User AuthorNavigation { get; set; } = null!;

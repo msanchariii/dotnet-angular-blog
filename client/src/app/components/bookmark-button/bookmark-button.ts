@@ -49,7 +49,7 @@ export class BookmarkButton {
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Failed to update bookmark.',
+            detail: 'Failed to bookmark.',
           });
         }
         this.isLoading = false;

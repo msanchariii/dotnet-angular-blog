@@ -41,6 +41,24 @@ export class BlogService {
     );
   }
 
+  findMyBlogs(): Observable<FindBlogExtended[]> {
+    const userId = this.authService.getUserId();
+    if (!userId) {
+      return of([]);
+    }
+    return this.http.get<ApiResponse<FindBlog[]>>(`/api/blogs/get-blogs-by-user/${userId}`).pipe(
+      map(
+        (response) =>
+          response.data?.map((blog) => ({
+            ...blog,
+            readTime: this.getReadTime(blog.content),
+            avatarColor: this.getAvatarColor(blog.authorName),
+            initials: this.getInitials(blog.authorName),
+          })) ?? [],
+      ),
+    );
+  }
+
   findBlogById(blogId: string): Observable<FindBlogExtended | null> {
     return this.http.get<ApiResponse<FindBlog>>(`/api/blogs/${blogId}`).pipe(
       map((response) => {

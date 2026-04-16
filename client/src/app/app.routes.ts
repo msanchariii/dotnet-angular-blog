@@ -6,6 +6,7 @@ import { BlogDetails } from './pages/blog-details/blog-details';
 import { Layout } from './components/layout/layout';
 import { NewBlog } from './pages/new-blog/new-blog';
 import { MyBookmarks } from './components/my-bookmarks/my-bookmarks';
+import { MyBlog } from './pages/my-blog/my-blog';
 
 export const routes: Routes = [
   {
@@ -23,23 +24,9 @@ export const routes: Routes = [
     component: Layout,
     children: [
       {
-        path: 'blog-feed',
-        component: BlogFeed,
-      },
-      {
-        path: 'blog-details',
-        component: BlogDetails,
-        title: 'Blog Details',
-      },
-      {
         path: 'new-blog',
         component: NewBlog,
         title: 'Create New Blog',
-      },
-      {
-        path: '',
-        component: BlogFeed,
-        title: 'Blog Feed',
       },
       {
         path: 'bookmarks',
@@ -47,9 +34,19 @@ export const routes: Routes = [
         title: 'My Bookmarks',
       },
       {
+        path: 'profile',
+        component: MyBlog,
+        title: 'My Blogs',
+      },
+      {
         path: ':blogid',
         component: BlogDetails,
         title: 'Blog Details',
+      },
+      {
+        path: '',
+        component: BlogFeed,
+        title: 'Blog Feed',
       },
     ],
   },

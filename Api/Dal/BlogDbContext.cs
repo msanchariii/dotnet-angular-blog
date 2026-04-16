@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Api.Dal.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Api.Dal.Helper;
+namespace Api.Dal;
 
 public partial class BlogDbContext : DbContext
 {
@@ -35,6 +35,7 @@ public partial class BlogDbContext : DbContext
 
             entity.Property(e => e.Id).HasDefaultValueSql("gen_random_uuid()");
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.IsPublished).HasDefaultValue(true);
 
             entity.HasOne(d => d.AuthorNavigation).WithMany(p => p.Blogs)
                 .OnDelete(DeleteBehavior.ClientSetNull)

@@ -1,14 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { BookmarkButton } from '../bookmark-button/bookmark-button';
 
-const avatarColors = [
-  'bg-yellow-500',
-  'bg-green-400',
-  'bg-blue-500',
-  'bg-red-400',
-  'bg-purple-500',
-];
-
 @Component({
   selector: 'app-blog-card',
   imports: [BookmarkButton],
@@ -29,6 +21,7 @@ export class BlogCard {
   @Input() readTime = '';
   @Input() blogId = '';
   @Input() isBookmarked = false;
+  @Input() isPublished: boolean | null | undefined;
   @Output() bookmarkChanged = new EventEmitter<{ blogId: string; isBookmarked: boolean }>();
 
   onBookmarkToggled(isBookmarked: boolean) {

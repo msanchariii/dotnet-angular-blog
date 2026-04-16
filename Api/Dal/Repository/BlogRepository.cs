@@ -64,7 +64,7 @@ public class BlogRepository : IBlogRepository
             ON bm.blog_id = b.id 
             AND bm.user_id = @UserId
 
-        WHERE b.is_deleted = false
+        WHERE b.is_deleted = false AND b.is_published = true
     ");
 
     // ---------------- CATEGORY FILTER ----------------
@@ -127,6 +127,7 @@ public async Task<IEnumerable<FindBlogDto>> GetBlogsByUser(Guid userId)
         var query = @"SELECT b.id AS BlogId,
                              b.author AS UserId,
                              b.blog_title AS Title,
+                             b.is_published AS IsPublished,
                              b.blog_content AS Content,
                              b.category_id AS CategoryId,
                              COALESCE(array_agg(t.tag_name) FILTER (WHERE t.tag_name IS NOT NULL), ARRAY[]::text[]) AS Tags,
@@ -149,6 +150,7 @@ public async Task<IEnumerable<FindBlogDto>> GetBlogsByUser(Guid userId)
                              b.author AS UserId,
                              u.first_name || ' ' || u.last_name AS AuthorName,
                              b.blog_title AS Title,
+                             b.is_published AS IsPublished,
                              b.blog_content AS Content,
                              b.category_id AS CategoryId,
                              c.category_name AS CategoryName,
