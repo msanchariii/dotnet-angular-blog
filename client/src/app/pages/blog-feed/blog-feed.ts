@@ -42,7 +42,7 @@ export class BlogFeed {
 
   ngOnInit() {
     this.blogService.findBlogs().subscribe((blogs) => {
-      console.log('Fetched blogs:', blogs);
+      // console.log('Fetched blogs:', blogs);
       this.blogData = blogs;
       this.cdr.detectChanges();
     });

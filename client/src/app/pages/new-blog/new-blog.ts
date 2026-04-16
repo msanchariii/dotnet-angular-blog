@@ -98,15 +98,16 @@ export class NewBlog implements OnInit {
       .subscribe({
         next: (response) => {
           if (response.success && response.data) {
-            this.successMessage = 'Blog published successfully.';
+            this.successMessage = 'Blog submitted successfully.';
             this.title = '';
             this.content = '';
             this.categoryId = '';
             this.tags = [];
+
             return;
           }
 
-          this.errorMessage = response.message || 'Unable to publish blog.';
+          this.errorMessage = response.message || 'Unable to submit blog.';
         },
         error: (err) => {
           this.errorMessage = err?.error?.message || 'Unable to publish blog. Please try again.';

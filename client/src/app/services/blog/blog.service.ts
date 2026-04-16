@@ -21,7 +21,7 @@ export class BlogService {
 
   findBlogs(): Observable<FindBlogExtended[]> {
     const userId = this.authService.getUserId();
-    console.log('Fetching Blogs For the user: ', userId);
+    // console.log('Fetching Blogs For the user: ', userId);
 
     const query = new URLSearchParams({ pageSize: '100' });
     if (userId) {

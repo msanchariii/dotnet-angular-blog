@@ -31,7 +31,7 @@ export class MyBookmarks {
   ngOnInit() {
     this.blogService.getMyBookmarks().subscribe((blogs) => {
       this.blogData = blogs;
-      console.log('Bookmarks:', blogs);
+      // console.log('Bookmarks:', blogs);
 
       this.cdr.detectChanges();
     });

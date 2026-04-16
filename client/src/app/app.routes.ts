@@ -9,6 +9,16 @@ import { MyBookmarks } from './components/my-bookmarks/my-bookmarks';
 
 export const routes: Routes = [
   {
+    path: 'login',
+    component: LoginForm,
+    title: 'Login',
+  },
+  {
+    path: 'register',
+    component: RegisterForm,
+    title: 'Register',
+  },
+  {
     path: '',
     component: Layout,
     children: [
@@ -42,15 +52,5 @@ export const routes: Routes = [
         title: 'Blog Details',
       },
     ],
-  },
-  {
-    path: 'login',
-    component: LoginForm,
-    title: 'Login',
-  },
-  {
-    path: 'register',
-    component: RegisterForm,
-    title: 'Register',
   },
 ];

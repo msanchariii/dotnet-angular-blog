@@ -1,79 +1,81 @@
-<form id="new-blog-form" (ngSubmit)="submitBlog()">
-  <h1>What's on your mind?</h1>
+<div class="w-full h-full flex items-center justify-center">
+  <form id="new-blog-form" (ngSubmit)="submitBlog()">
+    <h1>What's on your mind?</h1>
 
-  <div class="field">
-    <label for="title">Title</label>
-    <input
-      id="title"
-      type="text"
-      pInputText
-      name="title"
-      [(ngModel)]="title"
-      placeholder="Give your post a strong title"
-      required
-      [disabled]="isSubmitting"
-    />
-  </div>
+    <div class="field">
+      <label for="title">Title</label>
+      <input
+        id="title"
+        type="text"
+        pInputText
+        name="title"
+        [(ngModel)]="title"
+        placeholder="Give your post a strong title"
+        required
+        [disabled]="isSubmitting"
+      />
+    </div>
 
-  <div class="field">
-    <label for="category">Category</label>
-    <p-select
-      id="category"
-      name="category"
-      [options]="categories"
-      optionLabel="categoryName"
-      optionValue="categoryId"
-      placeholder="Pick a category"
-      [(ngModel)]="categoryId"
-      required
-      [showClear]="true"
-      [disabled]="isSubmitting"
-      class="w-full"
-    />
-  </div>
+    <div class="field">
+      <label for="category">Category</label>
+      <p-select
+        id="category"
+        name="category"
+        [options]="categories"
+        optionLabel="categoryName"
+        optionValue="categoryId"
+        placeholder="Pick a category"
+        [(ngModel)]="categoryId"
+        required
+        [showClear]="true"
+        [disabled]="isSubmitting"
+        class="w-full"
+      />
+    </div>
 
-  <div class="field">
-    <label for="content">Content</label>
-    <textarea
-      id="content"
-      pInputTextarea
-      name="content"
-      [(ngModel)]="content"
-      [autoResize]="true"
-      rows="10"
-      placeholder="Write your blog. Use #hashtags to auto-generate tags"
-      required
-      [disabled]="isSubmitting"
-      (ngModelChange)="onContentChange()"
-    ></textarea>
-  </div>
+    <div class="field">
+      <label for="content">Content</label>
+      <textarea
+        id="content"
+        pInputTextarea
+        name="content"
+        [(ngModel)]="content"
+        [autoResize]="true"
+        rows="10"
+        placeholder="Write your blog. Use #hashtags to auto-generate tags"
+        required
+        [disabled]="isSubmitting"
+        (ngModelChange)="onContentChange()"
+      ></textarea>
+    </div>
 
-  <div class="field">
-    <label>Tags from content</label>
-    @if (tags.length) {
-      <div class="tags-wrap">
-        @for (tag of tags; track tag) {
-          <span class="tag-chip">{{ tag }}</span>
-        }
-      </div>
-    } @else {
-      <p class="hint">No tags found yet. Add words like #angular or #dotnet in content.</p>
+    <div class="field">
+      <label>Tags from content</label>
+      @if (tags.length) {
+        <div class="tags-wrap">
+          @for (tag of tags; track tag) {
+            <span class="tag-chip">{{ tag }}</span>
+          }
+        </div>
+      } @else {
+        <p class="hint">No tags found yet. Add words like #angular or #dotnet in content.</p>
+      }
+    </div>
+
+    @if (errorMessage) {
+      <p class="error">{{ errorMessage }}</p>
     }
-  </div>
 
-  @if (errorMessage) {
-    <p class="error">{{ errorMessage }}</p>
-  }
+    @if (successMessage) {
+      <p class="success">{{ successMessage }}</p>
+    }
 
-  @if (successMessage) {
-    <p class="success">{{ successMessage }}</p>
-  }
-
-  <p-button
-    type="submit"
-    label="Publish Blog"
-    [disabled]="isSubmitting || isFormInvalid"
-    [loading]="isSubmitting"
-    styleClass="w-full"
-  />
-</form>
+    <p-button
+      type="submit"
+      label="Submit Blog"
+      [disabled]="isSubmitting || isFormInvalid"
+      [loading]="isSubmitting"
+      styleClass="w-full"
+    />
+  </form>
+</div>

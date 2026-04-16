@@ -1,10 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { BlogService } from '../../services/blog/blog.service';
 import { FindBlog } from '../../model/FindBlog';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-blog-details',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './blog-details.html',
   styleUrl: './blog-details.css',
 })

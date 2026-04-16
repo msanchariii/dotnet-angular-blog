@@ -108,3 +108,12 @@ Category:
 - id
 - categoryName
 - slug
+
+[x] back button
+is_published
+My Blogs + is_published er badge
+[x] navbar fixed
+input field red ta bondho korbo
+add toaster
+[x] bookmark outline -> filled
+[x] Publish -> Submit Blog
