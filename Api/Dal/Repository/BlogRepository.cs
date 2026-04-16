@@ -12,6 +12,7 @@ public class BlogRepository : IBlogRepository
     {
         _context = context;
     }
+
     public async Task<IEnumerable<FindBlogWithBookmark>> GetAllBlogs(FindAllBlogsParameters @params)
 {
     using var connection = _context.CreateConnection();
@@ -303,4 +304,17 @@ public async Task<IEnumerable<FindBlogDto>> GetBlogsByUser(Guid userId)
         slug = Regex.Replace(slug, "[^a-z0-9]+", "-");
         return slug.Trim('-');
     }
+
+    public async Task<BlogCount> GetBlogCount()
+    {
+        using var connection = _context.CreateConnection();
+        var query = @"SELECT 
+                        COUNT(*) FILTER (WHERE is_published = true) AS publishedCount,
+                        COUNT(*) AS totalCount
+                      FROM blogs
+                      WHERE is_deleted = false";
+
+        return await connection.QueryFirstAsync<BlogCount>(query);
+    }
+
 }

@@ -30,13 +30,13 @@ export class BlogService {
 
     const query = new URLSearchParams({ pageSize: params?.PageSize?.toString() ?? '10' });
     if (params?.PageNo) {
-      query.set('pageNo', params.PageNo.toString());
+      query.set('PageNo', params.PageNo.toString());
     }
     if (params?.SortBy) {
-      query.set('sortBy', params.SortBy);
+      query.set('SortBy', params.SortBy);
     }
     if (params?.CategoryId) {
-      query.set('categoryId', params.CategoryId);
+      query.set('Category', params.CategoryId);
     }
 
     if (userId) {

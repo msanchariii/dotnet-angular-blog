@@ -6,4 +6,6 @@ public interface IBlogRepository
     Task<FindBlogDto?> CreateBlog(CreateBlogRequestDto request);
     Task<FindBlogDto?> UpdateBlog(Guid blogId, UpdateBlogRequestDto request);
     Task<bool> SoftDeleteBlog(Guid blogId, Guid userId);
+
+    Task<BlogCount> GetBlogCount();
 }

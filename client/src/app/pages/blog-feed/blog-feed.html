@@ -1,5 +1,8 @@
 <div class="flex flex-col bg-purple-100 py-24 px-8">
-  <aside class="grid w-full grid-cols-1 md:grid-cols-4 max-w-5xl mx-auto gap-4">
+  <form
+    class="grid w-full grid-cols-1 md:grid-cols-4 max-w-5xl mx-auto gap-4"
+    (ngSubmit)="applyFilters()"
+  >
     <!-- Sort By -->
     <div class="flex w-full min-w-0 flex-col gap-2">
       <label for="sort" class="text-purple-900 font-semibold text-lg">Sort By</label>
@@ -7,6 +10,7 @@
         class="w-full"
         [options]="sortBy"
         [(ngModel)]="selectedSort"
+        name="sortBy"
         optionLabel="label"
         optionValue="value"
         placeholder="Select Sort Order"
@@ -19,8 +23,10 @@
       <p-select
         class="w-full"
         [options]="categories"
-        [(ngModel)]="selectedCategory"
+        [(ngModel)]="selectedCategoryId"
+        name="categoryId"
         optionLabel="categoryName"
+        optionValue="categoryId"
         placeholder="Select a Category"
         [fluid]="true"
       />
@@ -32,6 +38,7 @@
         class="w-full"
         [options]="tags"
         [(ngModel)]="selectedTags"
+        name="tags"
         optionLabel="name"
         placeholder="Select Tags"
         [maxSelectedLabels]="3"
@@ -40,11 +47,12 @@
     </div>
     <!-- button -->
     <button
+      type="submit"
       class="bg-purple-600 w-full text-white py-2 px-4 h-10 self-end font-semibold rounded hover:bg-purple-700"
     >
       Apply Filters
     </button>
-  </aside>
+  </form>
   <main>
     <div>
       @for (blog of blogData; track blog.blogId) {
