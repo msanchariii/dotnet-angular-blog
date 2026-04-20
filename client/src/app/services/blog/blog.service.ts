@@ -177,6 +177,11 @@ export class BlogService {
     return Array.from(tagSet);
   }
 
+  sanitizeBlogContent(content: string): string {
+    // change &nbsp; to space
+    return content.replace(/&nbsp;/g, ' ');
+  }
+
   updateBlog(blogId: string, payload: any): Observable<ApiResponse<any>> {
     return this.http.put<ApiResponse<any>>(`/api/blogs/${blogId}`, payload);
   }

@@ -39,6 +39,7 @@ export class BlogDetails implements OnInit {
             this.avatarColor = this.blogService.getAvatarColor(this.blog.authorName);
             this.initials = this.blogService.getInitials(this.blog.authorName);
             this.tags = (this.blog.tags ?? []).filter((tag) => !!tag?.trim());
+            this.blog.content = this.blogService.sanitizeBlogContent(this.blog.content);
           } else {
             this.tags = [];
           }

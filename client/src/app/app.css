@@ -6,6 +6,10 @@ main {
   @apply min-h-screen w-full p-6 lg:p-12;
 }
 
+.p {
+  display: flex !important;
+}
+
 .poppins-thin {
   font-family: 'Poppins', sans-serif;
   font-weight: 100;
@@ -143,12 +147,13 @@ main {
 :host ::ng-deep .quill {
   @apply leading-8 text-slate-800;
   overflow-wrap: anywhere; /* handles long strings ONLY when needed */
-  word-break: keep-all; /* prevents breaking words unless necessary */
-  hyphens: auto; /* allows hyphenation for better word breaking */
+  word-break: keep-all;
+  /* hyphens: auto; */
 }
 
 :host ::ng-deep .quill p {
   @apply mb-3;
+  display: flex !important;
 }
 
 :host ::ng-deep .quill img {
@@ -158,4 +163,14 @@ main {
 
 :host ::ng-deep .quill pre {
   overflow-x: auto; /* allow scroll for code blocks */
+}
+
+:host ::ng-deep .quill img {
+  width: 100%;
+  border-radius: 16px;
+}
+
+:host ::ng-deep .card-quill {
+  overflow-wrap: anywhere; /* handles long strings ONLY when needed */
+  word-break: keep-all;
 }
