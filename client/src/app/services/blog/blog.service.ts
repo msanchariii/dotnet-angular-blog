@@ -77,7 +77,7 @@ export class BlogService {
   findBlogById(blogId: string): Observable<FindBlogExtended | null> {
     return this.http.get<ApiResponse<FindBlog>>(`/api/blogs/${blogId}`).pipe(
       map((response) => {
-        console.log(response);
+        // console.log(response);
 
         const blog = response.data;
         if (!blog) return null;
@@ -135,7 +135,7 @@ export class BlogService {
   }
 
   getReadTime(content: string): string {
-    const wordsPerMinute = 200; // Average reading speed
+    const wordsPerMinute = 150; // Average reading speed
     const words = content.trim().split(/\s+/).length;
     const minutes = Math.ceil(words / wordsPerMinute);
     return `${minutes} min read`;

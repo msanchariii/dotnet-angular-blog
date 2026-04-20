@@ -8,6 +8,7 @@ public class BlogRepository : IBlogRepository
 {
     private readonly DapperContext _context;
 
+
     public BlogRepository(DapperContext context)
     {
         _context = context;
@@ -186,6 +187,8 @@ public async Task<IEnumerable<FindBlogDto>> GetBlogsByUser(Guid userId)
                           VALUES (@UserId, @Title, @Content, @CategoryId, false)
                           RETURNING id";
 
+            
+
             var blogId = await connection.ExecuteScalarAsync<Guid>(
                 query,
                 new { request.UserId, request.Title, request.Content, request.CategoryId },
@@ -280,6 +283,10 @@ public async Task<IEnumerable<FindBlogDto>> GetBlogsByUser(Guid userId)
         foreach (var tagName in distinctTags)
         {
             var slug = Slugify(tagName);
+            if (string.IsNullOrWhiteSpace(slug))
+            {
+                continue;
+            }
 
             var tagId = await connection.ExecuteScalarAsync<Guid>(
                 @"INSERT INTO tag (tag_name, slug)

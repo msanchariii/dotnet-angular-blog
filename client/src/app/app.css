@@ -139,3 +139,23 @@ main {
 :host ::ng-deep .quill ol {
   @apply list-decimal list-inside mt-4 mb-4;
 }
+
+:host ::ng-deep .quill {
+  @apply leading-8 text-slate-800;
+  overflow-wrap: anywhere; /* handles long strings ONLY when needed */
+  word-break: keep-all; /* prevents breaking words unless necessary */
+  hyphens: auto; /* allows hyphenation for better word breaking */
+}
+
+:host ::ng-deep .quill p {
+  @apply mb-3;
+}
+
+:host ::ng-deep .quill img {
+  max-width: 100%;
+  height: auto;
+}
+
+:host ::ng-deep .quill pre {
+  overflow-x: auto; /* allow scroll for code blocks */
+}

@@ -97,6 +97,20 @@ public class BlogService : IBlogService
     {
         try
         {
+            // Merge explicit request tags with hashtags detected in content.
+            var contentTags = request.Content
+                .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                .Where(word => word.StartsWith("#"))
+                .Select(word => word.Trim().TrimStart('#'))
+                .Where(tag => !string.IsNullOrWhiteSpace(tag));
+
+            request.Tags = (request.Tags ?? Array.Empty<string>())
+                .Concat(contentTags)
+                .Select(tag => tag.Trim().ToLowerInvariant())
+                .Where(tag => !string.IsNullOrWhiteSpace(tag))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
             var blog = await _blogRepository.CreateBlog(request);
             if (blog == null)
             {

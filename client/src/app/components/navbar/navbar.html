@@ -24,13 +24,19 @@
         </a>
       </li>
       <li>
-        <button class="cursor-pointer" (click)="goToFeed()">Feed</button>
+        <a
+          routerLink="/"
+          routerLinkActive="border-b-2 border-white"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          Feed
+        </a>
       </li>
       <li>
-        <button class="cursor-pointer" (click)="goToBookmarks()">Bookmarks</button>
+        <a routerLink="/bookmarks" routerLinkActive="border-b-2 border-white"> Bookmarks </a>
       </li>
       <li>
-        <button class="cursor-pointer" (click)="goToProfile()">My Blogs</button>
+        <a routerLink="/profile" routerLinkActive="border-b-2 border-white"> My Blogs </a>
       </li>
     </ul>
   </nav>

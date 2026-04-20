@@ -31,7 +31,7 @@ export class BlogDetails implements OnInit {
       this.blogService.findBlogById(this.blogid).subscribe({
         next: (blog) => {
           this.blog = blog;
-          console.log(this.blog);
+          // console.log(this.blog);
           this.isLoading = false;
           if (this.blog) {
             this.publishedAt = this.blogService.formatCreatedAt(this.blog.createdAt);
