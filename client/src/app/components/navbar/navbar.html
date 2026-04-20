@@ -34,5 +34,14 @@
       </li>
     </ul>
   </nav>
-  <button class="cursor-pointer">Logout</button>
+  <div>
+    <span class="font-medium p-1 rounded mr-4">{{ userEmail }}</span>
+    <button
+      type="button"
+      (click)="onLogout()"
+      class="bg-white hover:bg-purple-50 cursor-pointer text-purple-900 py-1 px-2 rounded"
+    >
+      Logout
+    </button>
+  </div>
 </header>

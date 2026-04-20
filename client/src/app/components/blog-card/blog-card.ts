@@ -25,7 +25,10 @@ export class BlogCard {
   @Input() isBookmarked = false;
   @Input() isPublished: boolean | null | undefined;
   @Input() showBookmarkButton = true;
+  @Input() isMyBlog = false;
   @Output() bookmarkChanged = new EventEmitter<{ blogId: string; isBookmarked: boolean }>();
+  @Output() editClicked = new EventEmitter<string>();
+  @Output() deleteClicked = new EventEmitter<string>();
 
   onBookmarkToggled(isBookmarked: boolean) {
     this.isBookmarked = isBookmarked;
@@ -34,5 +37,19 @@ export class BlogCard {
 
   viewBlog(blogId: string) {
     this.router.navigate(['/blog', blogId]);
+  }
+
+  onEditClicked() {
+    if (!this.blogId) {
+      return;
+    }
+    this.editClicked.emit(this.blogId);
+  }
+
+  onDeleteClicked() {
+    if (!this.blogId) {
+      return;
+    }
+    this.deleteClicked.emit(this.blogId);
   }
 }

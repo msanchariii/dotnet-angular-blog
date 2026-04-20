@@ -9,6 +9,7 @@ import { FindCategory } from '../../model/FindCategory';
 import { CategoryService } from '../../services/category/category.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { EditBlog } from '../../components/edit-blog/edit-blog';
 
 interface Tag {
   name: string;
@@ -17,7 +18,7 @@ interface Tag {
 
 @Component({
   selector: 'app-blog-feed',
-  imports: [BlogCard, FormsModule, SelectModule, MultiSelectModule, PaginatorModule],
+  imports: [BlogCard, FormsModule, SelectModule, MultiSelectModule, PaginatorModule, EditBlog],
   templateUrl: './blog-feed.html',
   styleUrl: './blog-feed.css',
 })
@@ -98,6 +99,12 @@ export class BlogFeed {
       },
       queryParamsHandling: 'merge',
     });
+  }
+
+  resetFilters() {
+    this.selectedSort = 'newest';
+    this.selectedCategoryId = undefined;
+    this.selectedTags = [];
   }
 
   onPageChange(event: PaginatorState) {

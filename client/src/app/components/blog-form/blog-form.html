@@ -1,0 +1,93 @@
+<!-- <div class="w-full h-full flex items-center justify-center py-24 lg:py-32"> -->
+<form id="new-blog-form" (ngSubmit)="submit()">
+  @if (!isEditMode) {
+    <h1>Create a new blog post</h1>
+  } @else {
+    <h1 class="sr-only">Edit your blog post</h1>
+  }
+  <div class="field">
+    <label for="title">Title</label>
+    <input
+      id="title"
+      type="text"
+      pInputText
+      name="title"
+      [(ngModel)]="title"
+      placeholder="Give your post a strong title"
+      required
+      [disabled]="isSubmitting"
+    />
+  </div>
+
+  <div class="field">
+    <label for="category">Category</label>
+    <p-select
+      id="category"
+      name="category"
+      [options]="categories"
+      optionLabel="categoryName"
+      optionValue="categoryId"
+      placeholder="Pick a category"
+      [(ngModel)]="categoryId"
+      required
+      [showClear]="true"
+      [disabled]="isSubmitting"
+      class="w-full"
+    />
+  </div>
+
+  <div class="field">
+    <label for="content">Content</label>
+    <p-editor
+      id="content"
+      name="content"
+      [(ngModel)]="content"
+      placeholder="Write your blog. Use #hashtags to auto-generate tags"
+      required
+      [disabled]="isSubmitting"
+      (ngModelChange)="onContentChange()"
+      [style]="{ height: '320px' }"
+    ></p-editor>
+    <!-- <textarea
+        id="content"
+        pInputTextarea
+        name="content"
+        [(ngModel)]="content"
+        [autoResize]="true"
+        rows="10"
+        placeholder="Write your blog. Use #hashtags to auto-generate tags"
+        required
+        [disabled]="isSubmitting"
+        (ngModelChange)="onContentChange()"
+      ></textarea> -->
+  </div>
+
+  <div class="field">
+    <label>Tags from content</label>
+    @if (tags.length) {
+      <div class="tags-wrap">
+        @for (tag of tags; track tag) {
+          <span class="tag-chip">{{ tag }}</span>
+        }
+      </div>
+    } @else {
+      <p class="hint">No tags found yet. Add words like #angular or #dotnet in content.</p>
+    }
+  </div>
+
+  @if (errorMessage) {
+    <p class="error">{{ errorMessage }}</p>
+  }
+
+  @if (successMessage) {
+    <p class="success">{{ successMessage }}</p>
+  }
+
+  <p-button
+    type="submit"
+    [label]="isEditMode ? 'Update Blog' : 'Submit Blog'"
+    [disabled]="isSubmitting || isFormInvalid"
+    [loading]="isSubmitting"
+  />
+</form>
+<!-- </div> -->

@@ -1,0 +1,12 @@
+<p-dialog
+  [visible]="visible"
+  (visibleChange)="onVisibleChange($event)"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: 'min(760px, 95vw)' }"
+  header="Edit Blog"
+>
+  <app-blog-form [editId]="editId" (onSaveSuccess)="onSaveSuccess($event)"></app-blog-form>
+</p-dialog>

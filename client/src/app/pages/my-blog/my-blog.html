@@ -1,4 +1,10 @@
 <div class="flex flex-col bg-purple-100 py-24 px-8">
+  <app-edit-blog
+    [(visible)]="isEditDialogVisible"
+    [editId]="selectedBlogId"
+    (saved)="onBlogUpdated()"
+  ></app-edit-blog>
+
   <main>
     <div>
       @for (blog of blogData; track blog.blogId) {
@@ -16,6 +22,9 @@
           [isPublished]="blog.isPublished"
           (bookmarkChanged)="onBookmarkChanged($event)"
           [showBookmarkButton]="false"
+          [isMyBlog]="true"
+          (editClicked)="onEditBlog($event)"
+          (deleteClicked)="onDeleteBlog($event)"
         ></app-blog-card>
       }
     </div>

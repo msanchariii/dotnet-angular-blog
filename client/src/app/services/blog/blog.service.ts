@@ -113,7 +113,17 @@ export class BlogService {
   }
 
   deleteBlog(blogId: string): Observable<ApiResponse<any>> {
-    return this.http.delete<ApiResponse<any>>(`/api/blogs/${blogId}`);
+    const userId = this.authService.getUserId();
+    if (!userId) {
+      return of({
+        success: false,
+        message: 'User not found',
+        data: null,
+        statusCode: 401,
+      } as ApiResponse<any>);
+    }
+
+    return this.http.delete<ApiResponse<any>>(`/api/blogs/${blogId}?userId=${userId}`);
   }
 
   getInitials(author: string): string {
@@ -165,5 +175,9 @@ export class BlogService {
       }
     });
     return Array.from(tagSet);
+  }
+
+  updateBlog(blogId: string, payload: any): Observable<ApiResponse<any>> {
+    return this.http.put<ApiResponse<any>>(`/api/blogs/${blogId}`, payload);
   }
 }
