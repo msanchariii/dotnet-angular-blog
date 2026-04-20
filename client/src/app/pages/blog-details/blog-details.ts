@@ -23,7 +23,7 @@ export class BlogDetails implements OnInit {
   protected publishedAt: string = '';
   protected initials: string | undefined;
   protected avatarColor: string | undefined;
-  protected readonly tags = ['layout', 'hierarchy', 'readability', 'tailwind'];
+  protected tags: string[] = [];
 
   ngOnInit() {
     this.blogid = this.activateRoute.snapshot.paramMap.get('blogid') || '';
@@ -38,6 +38,9 @@ export class BlogDetails implements OnInit {
             this.readTime = this.blogService.getReadTime(this.blog.content);
             this.avatarColor = this.blogService.getAvatarColor(this.blog.authorName);
             this.initials = this.blogService.getInitials(this.blog.authorName);
+            this.tags = (this.blog.tags ?? []).filter((tag) => !!tag?.trim());
+          } else {
+            this.tags = [];
           }
           this.cdr.detectChanges();
         },
