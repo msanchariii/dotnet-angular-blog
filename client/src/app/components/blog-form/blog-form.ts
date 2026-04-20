@@ -3,10 +3,10 @@ import {
   ChangeDetectorRef,
   OnInit,
   PLATFORM_ID,
-  Inject,
   inject,
   input,
   output,
+  effect,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -46,6 +46,19 @@ export class BlogFormComponent implements OnInit {
   errorMessage: string = '';
   successMessage: string = '';
 
+  private readonly syncEditData = effect(() => {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    const id = this.editId();
+    if (!id) {
+      return;
+    }
+
+    this.loadBlogData(id);
+  });
+
   get isEditMode(): boolean {
     return !!this.editId();
   }
@@ -59,11 +72,6 @@ export class BlogFormComponent implements OnInit {
 
     this.userId = localStorage.getItem('userId');
     this.loadCategories();
-
-    // If editId is provided, fetch existing data
-    if (this.isEditMode) {
-      this.loadBlogData(this.editId()!);
-    }
   }
 
   private loadCategories() {
@@ -80,6 +88,7 @@ export class BlogFormComponent implements OnInit {
         this.content = data.content;
         this.categoryId = data.categoryId;
         this.tags = data.tags;
+        this.cdr.detectChanges();
       }
     });
   }
