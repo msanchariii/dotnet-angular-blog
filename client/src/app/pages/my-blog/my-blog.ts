@@ -48,6 +48,10 @@ export class MyBlog {
     this.loadMyBlogs();
   }
 
+  sanitizedBlogPreview(content: string): string {
+    return this.blogService.sanitizeBlogPreview(content);
+  }
+
   onDeleteBlog(blogId: string) {
     const isConfirmed = globalThis.confirm('Delete this blog?');
     if (!isConfirmed) {

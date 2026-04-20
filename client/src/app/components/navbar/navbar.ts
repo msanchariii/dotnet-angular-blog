@@ -18,6 +18,15 @@ export class Navbar {
     this.userEmail = authService.getUserEmail();
   }
 
+  // isNavbarLinkActive(path: string): boolean {
+  //   return isActive(path, {
+  //     paths: 'exact',
+  //     queryParams: 'ignored',
+  //     fragment: 'ignored',
+  //     matrixParams: 'ignored',
+  //   });
+  // }
+
   goToBookmarks() {
     // This method can be used if you want to navigate programmatically
     this.router.navigate(['/bookmarks']);

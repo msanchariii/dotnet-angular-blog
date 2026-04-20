@@ -174,3 +174,13 @@ main {
   overflow-wrap: anywhere; /* handles long strings ONLY when needed */
   word-break: keep-all;
 }
+
+:host ::ng-deep .card-quill img {
+  margin-bottom: 24px;
+  border-radius: 15px;
+}
+
+:host ::ng-deep .card-quill p {
+  display: flex !important;
+  line-clamp: 5;
+}

@@ -44,7 +44,7 @@ export const routes: Routes = [
         title: 'Blog Details',
       },
       {
-        path: '',
+        path: 'blog',
         component: BlogFeed,
         title: 'Blog Feed',
       },

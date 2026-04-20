@@ -2,7 +2,7 @@
   <app-edit-blog></app-edit-blog>
 
   <form
-    class="grid w-full grid-cols-1 md:grid-cols-4 max-w-5xl mx-auto gap-4"
+    class="grid w-full grid-cols-1 md:grid-cols-4 max-w-7xl mx-auto gap-4"
     (ngSubmit)="applyFilters()"
   >
     <!-- Sort By -->
@@ -82,7 +82,7 @@
       @for (blog of blogData; track blog.blogId) {
         <app-blog-card
           [blogTitle]="blog.title"
-          [blogContent]="blog.content"
+          [blogContent]="sanitizedBlogPreview(blog.content)"
           [category]="blog.categoryName"
           [author]="blog.authorName"
           [tags]="blog.tags"

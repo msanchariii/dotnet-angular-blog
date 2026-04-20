@@ -25,9 +25,12 @@
       </li>
       <li>
         <a
-          routerLink="/"
+          routerLink="/blog"
           routerLinkActive="border-b-2 border-white"
-          [routerLinkActiveOptions]="{ exact: true }"
+          [routerLinkActiveOptions]="{
+            exact: true,
+            queryParams: 'ignored',
+          }"
         >
           Feed
         </a>

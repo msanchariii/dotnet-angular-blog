@@ -101,6 +101,10 @@ export class BlogFeed {
     });
   }
 
+  sanitizedBlogPreview(content: string): string {
+    return this.blogService.sanitizeBlogPreview(content);
+  }
+
   resetFilters() {
     this.selectedSort = 'newest';
     this.selectedCategoryId = undefined;

@@ -182,6 +182,11 @@ export class BlogService {
     return content.replace(/&nbsp;/g, ' ');
   }
 
+  sanitizeBlogPreview(content: string): string {
+    // change &nbsp; to space and remove all html tags
+    return content.replace(/&nbsp;/g, ' ').replace(/<[^>]*>/g, '');
+  }
+
   updateBlog(blogId: string, payload: any): Observable<ApiResponse<any>> {
     return this.http.put<ApiResponse<any>>(`/api/blogs/${blogId}`, payload);
   }
