@@ -20,7 +20,6 @@ export interface FindBlogExtended extends FindBlog {
 }
 
 export interface CreateBlogRequest {
-  userId: string;
   title: string;
   content: string;
   categoryId: string;

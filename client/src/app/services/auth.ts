@@ -11,8 +11,10 @@ import { RegisterRequest } from '../model/register-request';
   providedIn: 'root',
 })
 export class AuthService {
+  private readonly TOKEN_KEY = 'authToken';
   private readonly USER_ID_KEY = 'userId';
   private readonly USER_EMAIL_KEY = 'userEmail';
+  private readonly USER_ROLE_KEY = 'userRole';
 
   constructor(private http: HttpClient) {} // Injected here
 
@@ -30,8 +32,10 @@ export class AuthService {
         tap((response) => {
           if (response.statusCode === 200 && response.success && response.data) {
             if (this.canUseStorage()) {
-              localStorage.setItem(this.USER_ID_KEY, response.data.userId);
-              localStorage.setItem(this.USER_EMAIL_KEY, response.data.email);
+              localStorage.setItem(this.TOKEN_KEY, response.data.token);
+              localStorage.setItem(this.USER_ID_KEY, response.data.user.userId);
+              localStorage.setItem(this.USER_EMAIL_KEY, response.data.user.email);
+              localStorage.setItem(this.USER_ROLE_KEY, response.data.user.role);
             }
           }
         }),
@@ -51,7 +55,12 @@ export class AuthService {
     return {
       id: this.getUserId(),
       email: this.getUserEmail(),
+      role: this.getUserRole(),
     };
+  }
+
+  getToken(): string | null {
+    return this.canUseStorage() ? localStorage.getItem(this.TOKEN_KEY) : null;
   }
 
   getUserId(): string | null {
@@ -62,13 +71,19 @@ export class AuthService {
     return this.canUseStorage() ? localStorage.getItem(this.USER_EMAIL_KEY) : null;
   }
 
+  getUserRole(): string | null {
+    return this.canUseStorage() ? localStorage.getItem(this.USER_ROLE_KEY) : null;
+  }
+
   clearUser() {
     if (!this.canUseStorage()) return;
+    localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.USER_ID_KEY);
     localStorage.removeItem(this.USER_EMAIL_KEY);
+    localStorage.removeItem(this.USER_ROLE_KEY);
   }
 
   isLoggedIn(): boolean {
-    return !!this.getUserId();
+    return !!this.getToken();
   }
 }

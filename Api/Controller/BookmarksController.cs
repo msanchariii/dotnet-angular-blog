@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 [ApiController]
 [Route("api/bookmarks")]
@@ -11,15 +13,18 @@ public class BookmarksController : ControllerBase
         _bookmarkService = bookmarkService;
     }
 
+    [Authorize(Policy = "UserOrAdmin")]
     [HttpPost("toggle")]
     public async Task<ApiResponse<object?>> ToggleBookmark([FromBody] ToggleBookmarkRequestDto request)
     {
-        if (request.UserId == Guid.Empty || request.BlogId == Guid.Empty)
+        var currentUserId = GetCurrentUserId();
+
+        if (currentUserId == Guid.Empty || request.BlogId == Guid.Empty)
         {
             return new ApiResponse<object?>
             {
                 Success = false,
-                Message = "userId and blogId are required",
+                Message = "blogId is required",
                 Data = null,
                 StatusCode = 400
             };
@@ -27,7 +32,7 @@ public class BookmarksController : ControllerBase
 
         try
         {
-            return await _bookmarkService.ToggleBookmark(request);
+            return await _bookmarkService.ToggleBookmark(currentUserId, request.BlogId);
         }
         catch
         {
@@ -41,15 +46,18 @@ public class BookmarksController : ControllerBase
         }
     }
 
-    [HttpGet]
-    public async Task<ApiResponse<IEnumerable<FindBlogDto>>> GetUserBookmarks([FromQuery] Guid userId)
+    [Authorize(Policy = "UserOrAdmin")]
+    [HttpGet("me")]
+    public async Task<ApiResponse<IEnumerable<FindBlogDto>>> GetMyBookmarks()
     {
-        if (userId == Guid.Empty)
+        var currentUserId = GetCurrentUserId();
+
+        if (currentUserId == Guid.Empty)
         {
             return new ApiResponse<IEnumerable<FindBlogDto>>
             {
                 Success = false,
-                Message = "userId is required",
+                Message = "Unauthorized",
                 Data = Enumerable.Empty<FindBlogDto>(),
                 StatusCode = 400
             };
@@ -57,7 +65,7 @@ public class BookmarksController : ControllerBase
 
         try
         {
-            return await _bookmarkService.GetUserBookmarks(userId);
+            return await _bookmarkService.GetUserBookmarks(currentUserId);
         }
         catch
         {
@@ -69,5 +77,11 @@ public class BookmarksController : ControllerBase
                 StatusCode = 500
             };
         }
+    }
+
+    private Guid GetCurrentUserId()
+    {
+        var rawUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return Guid.TryParse(rawUserId, out var userId) ? userId : Guid.Empty;
     }
 }

@@ -11,6 +11,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { EditorModule } from 'primeng/editor';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-new-blog',
@@ -22,13 +23,13 @@ export class NewBlog implements OnInit {
   constructor(
     private blogService: BlogService,
     private categoryService: CategoryService,
+    private authService: AuthService,
     private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: object, // 👈 inject platform id
   ) {}
 
   private readonly router: Router = inject(Router);
 
-  userId: string | null = null; // 👈 no longer read localStorage here
   title: string = '';
   content: string = '';
   categories: FindCategory[] = [];
@@ -48,9 +49,7 @@ export class NewBlog implements OnInit {
       return;
     }
 
-    this.userId = localStorage.getItem('userId');
-
-    if (!this.userId) {
+    if (!this.authService.isLoggedIn()) {
       window.location.href = '/login';
       return;
     }
@@ -74,26 +73,35 @@ export class NewBlog implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    if (!this.userId) {
+    if (!this.authService.isLoggedIn()) {
       this.errorMessage = 'Please login first.';
       return;
     }
 
-    if (!this.title.trim() || !this.content.trim() || !this.categoryId) {
+    const title = this.title.trim();
+    const content = this.content.trim();
+
+    if (!title || !content || !this.categoryId) {
       this.errorMessage = 'Category, title and content are required.';
       return;
     }
 
     this.isSubmitting = true;
 
+    const payload = new Object() as {
+      title: string;
+      content: string;
+      categoryId: string | null;
+      tags: string[];
+    };
+
+    payload.title = title;
+    payload.content = content;
+    payload.categoryId = this.categoryId || null;
+    payload.tags = this.tags;
+
     this.blogService
-      .createBlog({
-        userId: this.userId,
-        title: this.title.trim(),
-        content: this.content.trim(),
-        categoryId: this.categoryId || null,
-        tags: this.tags,
-      })
+      .createBlog(payload)
       .pipe(
         finalize(() => {
           this.isSubmitting = false;

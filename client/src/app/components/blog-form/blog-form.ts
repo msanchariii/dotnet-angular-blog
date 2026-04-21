@@ -18,6 +18,7 @@ import { BlogService } from '../../services/blog/blog.service';
 import { CategoryService } from '../../services/category/category.service';
 import { FindCategory } from '../../model/FindCategory';
 import { finalize } from 'rxjs/operators';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-blog-form', // Changed selector name
@@ -32,10 +33,10 @@ export class BlogFormComponent implements OnInit {
 
   private blogService = inject(BlogService);
   private categoryService = inject(CategoryService);
+  private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
   private platformId = inject(PLATFORM_ID);
 
-  userId: string | null = null;
   title: string = '';
   content: string = '';
   categoryId: string = '';
@@ -70,7 +71,11 @@ export class BlogFormComponent implements OnInit {
   ngOnInit() {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    this.userId = localStorage.getItem('userId');
+    if (!this.authService.isLoggedIn()) {
+      window.location.href = '/login';
+      return;
+    }
+
     this.loadCategories();
   }
 
@@ -100,11 +105,10 @@ export class BlogFormComponent implements OnInit {
   }
 
   submit() {
-    if (this.isSubmitting || !this.userId) return;
+    if (this.isSubmitting || !this.authService.isLoggedIn()) return;
 
     this.isSubmitting = true;
     const payload = {
-      userId: this.userId,
       title: this.title.trim(),
       content: this.content.trim(),
       categoryId: this.categoryId,

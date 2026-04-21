@@ -93,7 +93,7 @@ public class BlogService : IBlogService
         }
     }
 
-    public async Task<ApiResponse<FindBlogDto?>> CreateBlog(CreateBlogRequestDto request)
+    public async Task<ApiResponse<FindBlogDto?>> CreateBlog(Guid userId, CreateBlogRequestDto request)
     {
         try
         {
@@ -111,7 +111,7 @@ public class BlogService : IBlogService
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToArray();
 
-            var blog = await _blogRepository.CreateBlog(request);
+            var blog = await _blogRepository.CreateBlog(userId, request);
             if (blog == null)
             {
                 return new ApiResponse<FindBlogDto?>
@@ -143,11 +143,11 @@ public class BlogService : IBlogService
         }
     }
 
-    public async Task<ApiResponse<FindBlogDto?>> UpdateBlog(Guid blogId, UpdateBlogRequestDto request)
+    public async Task<ApiResponse<FindBlogDto?>> UpdateBlog(Guid blogId, Guid userId, bool isAdmin, UpdateBlogRequestDto request)
     {
         try
         {
-            var blog = await _blogRepository.UpdateBlog(blogId, request);
+            var blog = await _blogRepository.UpdateBlog(blogId, userId, isAdmin, request);
             if (blog == null)
             {
                 return new ApiResponse<FindBlogDto?>
@@ -179,11 +179,11 @@ public class BlogService : IBlogService
         }
     }
 
-    public async Task<ApiResponse<object?>> SoftDeleteBlog(Guid blogId, Guid userId)
+    public async Task<ApiResponse<object?>> SoftDeleteBlog(Guid blogId, Guid userId, bool isAdmin)
     {
         try
         {
-            var deleted = await _blogRepository.SoftDeleteBlog(blogId, userId);
+            var deleted = await _blogRepository.SoftDeleteBlog(blogId, userId, isAdmin);
             if (!deleted)
             {
                 return new ApiResponse<object?>
@@ -206,6 +206,42 @@ public class BlogService : IBlogService
         catch
         {
             return new ApiResponse<object?>
+            {
+                Success = false,
+                Message = "Something went wrong",
+                Data = null,
+                StatusCode = 500
+            };
+        }
+    }
+
+    public async Task<ApiResponse<FindBlogDto?>> TogglePublish(Guid blogId, bool isPublished)
+    {
+        try
+        {
+            var blog = await _blogRepository.TogglePublish(blogId, isPublished);
+            if (blog == null)
+            {
+                return new ApiResponse<FindBlogDto?>
+                {
+                    Success = false,
+                    Message = "Blog not found",
+                    Data = null,
+                    StatusCode = 404
+                };
+            }
+
+            return new ApiResponse<FindBlogDto?>
+            {
+                Success = true,
+                Message = "Publish state updated successfully",
+                Data = blog,
+                StatusCode = 200
+            };
+        }
+        catch
+        {
+            return new ApiResponse<FindBlogDto?>
             {
                 Success = false,
                 Message = "Something went wrong",

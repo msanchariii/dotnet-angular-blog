@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 [ApiController]
 [Route("api/blogs")]
@@ -23,6 +25,7 @@ public class BlogsController : ControllerBase
     //     };
     // }
 
+    [AllowAnonymous]
     [HttpGet]
     public async Task<ApiResponse<IEnumerable<FindBlogWithBookmark>>> GetAllBlogs([FromQuery] FindAllBlogsParameters @params)
     {
@@ -42,9 +45,35 @@ public class BlogsController : ControllerBase
         }
     }
 
+    [Authorize(Policy = "UserOrAdmin")]
     [HttpGet("get-blogs-by-user/{userId}")]
     public async Task<ApiResponse<IEnumerable<FindBlogDto>>> GetBlogsByUser(Guid userId)
     {
+        var currentUserId = GetCurrentUserId();
+        var isAdmin = User.IsInRole("Admin");
+
+        if (currentUserId == Guid.Empty)
+        {
+            return new ApiResponse<IEnumerable<FindBlogDto>>
+            {
+                Success = false,
+                Message = "Unauthorized",
+                Data = Enumerable.Empty<FindBlogDto>(),
+                StatusCode = 401
+            };
+        }
+
+        if (!isAdmin && currentUserId != userId)
+        {
+            return new ApiResponse<IEnumerable<FindBlogDto>>
+            {
+                Success = false,
+                Message = "Forbidden",
+                Data = Enumerable.Empty<FindBlogDto>(),
+                StatusCode = 403
+            };
+        }
+
         if (userId == Guid.Empty)
         {
             return new ApiResponse<IEnumerable<FindBlogDto>>
@@ -102,15 +131,49 @@ public class BlogsController : ControllerBase
         }
     }
 
+    [Authorize(Policy = "UserOrAdmin")]
+    [HttpGet("my")]
+    public async Task<ApiResponse<IEnumerable<FindBlogDto>>> GetMyBlogs()
+    {
+        var currentUserId = GetCurrentUserId();
+        if (currentUserId == Guid.Empty)
+        {
+            return new ApiResponse<IEnumerable<FindBlogDto>>
+            {
+                Success = false,
+                Message = "Unauthorized",
+                Data = Enumerable.Empty<FindBlogDto>(),
+                StatusCode = 401
+            };
+        }
+
+        try
+        {
+            return await _blogService.GetBlogsByUser(currentUserId);
+        }
+        catch
+        {
+            return new ApiResponse<IEnumerable<FindBlogDto>>
+            {
+                Success = false,
+                Message = "Internal server error",
+                Data = Enumerable.Empty<FindBlogDto>(),
+                StatusCode = 500
+            };
+        }
+    }
+
+    [Authorize(Policy = "UserOrAdmin")]
     [HttpPost]
     public async Task<ApiResponse<FindBlogDto?>> CreateBlog([FromBody] CreateBlogRequestDto request)
     {
-        if (request.UserId == Guid.Empty || string.IsNullOrWhiteSpace(request.Title) || string.IsNullOrWhiteSpace(request.Content))
+        var currentUserId = GetCurrentUserId();
+        if (currentUserId == Guid.Empty || string.IsNullOrWhiteSpace(request.Title) || string.IsNullOrWhiteSpace(request.Content))
         {
             return new ApiResponse<FindBlogDto?>
             {
                 Success = false,
-                Message = "UserId, title and content are required",
+                Message = "Title and content are required",
                 Data = null,
                 StatusCode = 400
             };
@@ -118,7 +181,7 @@ public class BlogsController : ControllerBase
 
         try
         {
-            return await _blogService.CreateBlog(request);
+            return await _blogService.CreateBlog(currentUserId, request);
         }
         catch
         {
@@ -132,15 +195,19 @@ public class BlogsController : ControllerBase
         }
     }
 
+    [Authorize(Policy = "UserOrAdmin")]
     [HttpPut("{id}")]
     public async Task<ApiResponse<FindBlogDto?>> UpdateBlog(Guid id, [FromBody] UpdateBlogRequestDto request)
     {
-        if (id == Guid.Empty || request.UserId == Guid.Empty || string.IsNullOrWhiteSpace(request.Title) || string.IsNullOrWhiteSpace(request.Content))
+        var currentUserId = GetCurrentUserId();
+        var isAdmin = User.IsInRole("Admin");
+
+        if (id == Guid.Empty || currentUserId == Guid.Empty || string.IsNullOrWhiteSpace(request.Title) || string.IsNullOrWhiteSpace(request.Content))
         {
             return new ApiResponse<FindBlogDto?>
             {
                 Success = false,
-                Message = "BlogId, userId, title and content are required",
+                Message = "BlogId, title and content are required",
                 Data = null,
                 StatusCode = 400
             };
@@ -148,7 +215,7 @@ public class BlogsController : ControllerBase
 
         try
         {
-            return await _blogService.UpdateBlog(id, request);
+            return await _blogService.UpdateBlog(id, currentUserId, isAdmin, request);
         }
         catch
         {
@@ -162,15 +229,19 @@ public class BlogsController : ControllerBase
         }
     }
 
+    [Authorize(Policy = "UserOrAdmin")]
     [HttpDelete("{id}")]
-    public async Task<ApiResponse<object?>> SoftDeleteBlog(Guid id, [FromQuery] Guid userId)
+    public async Task<ApiResponse<object?>> SoftDeleteBlog(Guid id)
     {
-        if (id == Guid.Empty || userId == Guid.Empty)
+        var currentUserId = GetCurrentUserId();
+        var isAdmin = User.IsInRole("Admin");
+
+        if (id == Guid.Empty || currentUserId == Guid.Empty)
         {
             return new ApiResponse<object?>
             {
                 Success = false,
-                Message = "BlogId and userId are required",
+                Message = "BlogId is required",
                 Data = null,
                 StatusCode = 400
             };
@@ -178,7 +249,7 @@ public class BlogsController : ControllerBase
 
         try
         {
-            return await _blogService.SoftDeleteBlog(id, userId);
+            return await _blogService.SoftDeleteBlog(id, currentUserId, isAdmin);
         }
         catch
         {
@@ -190,5 +261,42 @@ public class BlogsController : ControllerBase
                 StatusCode = 500
             };
         }
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPatch("{id}/publish")]
+    public async Task<ApiResponse<FindBlogDto?>> TogglePublish(Guid id, [FromBody] TogglePublishRequestDto request)
+    {
+        if (id == Guid.Empty)
+        {
+            return new ApiResponse<FindBlogDto?>
+            {
+                Success = false,
+                Message = "BlogId is required",
+                Data = null,
+                StatusCode = 400
+            };
+        }
+
+        try
+        {
+            return await _blogService.TogglePublish(id, request.IsPublished);
+        }
+        catch
+        {
+            return new ApiResponse<FindBlogDto?>
+            {
+                Success = false,
+                Message = "Internal server error",
+                Data = null,
+                StatusCode = 500
+            };
+        }
+    }
+
+    private Guid GetCurrentUserId()
+    {
+        var rawUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return Guid.TryParse(rawUserId, out var userId) ? userId : Guid.Empty;
     }
 }

@@ -1,21 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable, of } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { ApiResponse } from '../../model/ApiResponse';
 import { FindBlog, FindBlogExtended } from '../../model/FindBlog';
 import { CreateBlogRequest } from '../../model/create-blog-request';
-import { AuthService } from '../auth';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BlogService {
-  constructor(
-    private http: HttpClient,
-    private authService: AuthService,
-  ) {}
+  constructor(private http: HttpClient) {}
 
-  createBlog(request: CreateBlogRequest): Observable<ApiResponse<any>> {
+  createBlog(request: any): Observable<ApiResponse<any>> {
     return this.http.post<ApiResponse<any>>('/api/blogs', request);
   }
 
@@ -25,9 +21,6 @@ export class BlogService {
     SortBy?: 'newest' | 'oldest' | 'popular';
     CategoryId?: string;
   }): Observable<FindBlogExtended[]> {
-    const userId = this.authService.getUserId();
-    // console.log('Fetching Blogs For the user: ', userId);
-
     const query = new URLSearchParams({ pageSize: params?.PageSize?.toString() ?? '10' });
     if (params?.PageNo) {
       query.set('PageNumber', params.PageNo.toString());
@@ -37,10 +30,6 @@ export class BlogService {
     }
     if (params?.CategoryId) {
       query.set('Category', params.CategoryId);
-    }
-
-    if (userId) {
-      query.set('userId', userId);
     }
 
     return this.http.get<ApiResponse<FindBlog[]>>(`/api/blogs?${query.toString()}`).pipe(
@@ -57,11 +46,7 @@ export class BlogService {
   }
 
   getMyBlogs(): Observable<FindBlogExtended[]> {
-    const userId = this.authService.getUserId();
-    if (!userId) {
-      return of([]);
-    }
-    return this.http.get<ApiResponse<FindBlog[]>>(`/api/blogs/get-blogs-by-user/${userId}`).pipe(
+    return this.http.get<ApiResponse<FindBlog[]>>('/api/blogs/my').pipe(
       map(
         (response) =>
           response.data?.map((blog) => ({
@@ -92,13 +77,7 @@ export class BlogService {
   }
 
   getMyBookmarks(): Observable<FindBlogExtended[]> {
-    const userId = this.authService.getUserId();
-
-    if (!userId) {
-      return of([]);
-    }
-
-    return this.http.get<ApiResponse<FindBlog[]>>(`/api/bookmarks?userId=${userId}`).pipe(
+    return this.http.get<ApiResponse<FindBlog[]>>('/api/bookmarks/me').pipe(
       map(
         (response) =>
           response.data?.map((blog) => ({
@@ -113,17 +92,7 @@ export class BlogService {
   }
 
   deleteBlog(blogId: string): Observable<ApiResponse<any>> {
-    const userId = this.authService.getUserId();
-    if (!userId) {
-      return of({
-        success: false,
-        message: 'User not found',
-        data: null,
-        statusCode: 401,
-      } as ApiResponse<any>);
-    }
-
-    return this.http.delete<ApiResponse<any>>(`/api/blogs/${blogId}?userId=${userId}`);
+    return this.http.delete<ApiResponse<any>>(`/api/blogs/${blogId}`);
   }
 
   getInitials(author: string): string {

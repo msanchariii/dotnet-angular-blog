@@ -6,7 +6,8 @@ import { provideClientHydration, withEventReplay } from '@angular/platform-brows
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
 import { MyPreset } from './mypreset';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { authInterceptor } from './services/auth-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,11 +17,11 @@ export const appConfig: ApplicationConfig = {
     providePrimeNG({
       theme: {
         preset: MyPreset,
-        options:{
-          darkModeSelector: false || 'none'
-        }
+        options: {
+          darkModeSelector: false || 'none',
+        },
       },
     }),
-    provideHttpClient(withFetch()),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
   ],
 };

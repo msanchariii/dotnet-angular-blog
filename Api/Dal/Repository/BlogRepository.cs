@@ -175,7 +175,7 @@ public async Task<IEnumerable<FindBlogDto>> GetBlogsByUser(Guid userId)
         return await connection.QueryFirstOrDefaultAsync<FindBlogDto>(query, new { BlogId = blogId });
     }
 
-    public async Task<FindBlogDto?> CreateBlog(CreateBlogRequestDto request)
+    public async Task<FindBlogDto?> CreateBlog(Guid userId, CreateBlogRequestDto request)
     {
         using var connection = _context.CreateConnection();
         connection.Open();
@@ -191,7 +191,7 @@ public async Task<IEnumerable<FindBlogDto>> GetBlogsByUser(Guid userId)
 
             var blogId = await connection.ExecuteScalarAsync<Guid>(
                 query,
-                new { request.UserId, request.Title, request.Content, request.CategoryId },
+                new { UserId = userId, request.Title, request.Content, request.CategoryId },
                 transaction
             );
 
@@ -207,7 +207,7 @@ public async Task<IEnumerable<FindBlogDto>> GetBlogsByUser(Guid userId)
         }
     }
 
-    public async Task<FindBlogDto?> UpdateBlog(Guid blogId, UpdateBlogRequestDto request)
+    public async Task<FindBlogDto?> UpdateBlog(Guid blogId, Guid userId, bool isAdmin, UpdateBlogRequestDto request)
     {
         using var connection = _context.CreateConnection();
         connection.Open();
@@ -219,11 +219,11 @@ public async Task<IEnumerable<FindBlogDto>> GetBlogsByUser(Guid userId)
                           SET blog_title = @Title,
                               blog_content = @Content,
                               category_id = @CategoryId
-                          WHERE id = @BlogId AND author = @UserId AND is_deleted = false";
+                          WHERE id = @BlogId AND is_deleted = false AND (@IsAdmin = true OR author = @UserId)";
 
             var updatedRows = await connection.ExecuteAsync(
                 query,
-                new { BlogId = blogId, request.UserId, request.Title, request.Content, request.CategoryId },
+                new { BlogId = blogId, UserId = userId, IsAdmin = isAdmin, request.Title, request.Content, request.CategoryId },
                 transaction
             );
 
@@ -251,15 +251,31 @@ public async Task<IEnumerable<FindBlogDto>> GetBlogsByUser(Guid userId)
         }
     }
 
-    public async Task<bool> SoftDeleteBlog(Guid blogId, Guid userId)
+    public async Task<bool> SoftDeleteBlog(Guid blogId, Guid userId, bool isAdmin)
     {
         using var connection = _context.CreateConnection();
         var query = @"UPDATE blogs
                       SET is_deleted = true
-                      WHERE id = @BlogId AND author = @UserId AND is_deleted = false";
+                      WHERE id = @BlogId AND is_deleted = false AND (@IsAdmin = true OR author = @UserId)";
 
-        var rows = await connection.ExecuteAsync(query, new { BlogId = blogId, UserId = userId });
+        var rows = await connection.ExecuteAsync(query, new { BlogId = blogId, UserId = userId, IsAdmin = isAdmin });
         return rows > 0;
+    }
+
+    public async Task<FindBlogDto?> TogglePublish(Guid blogId, bool isPublished)
+    {
+        using var connection = _context.CreateConnection();
+        var query = @"UPDATE blogs
+                      SET is_published = @IsPublished
+                      WHERE id = @BlogId AND is_deleted = false";
+
+        var rows = await connection.ExecuteAsync(query, new { BlogId = blogId, IsPublished = isPublished });
+        if (rows == 0)
+        {
+            return null;
+        }
+
+        return await GetBlogById(blogId);
     }
 
     private static async Task UpsertAndAttachTags(

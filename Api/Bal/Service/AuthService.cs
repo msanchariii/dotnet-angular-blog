@@ -1,23 +1,29 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+
 public class AuthService : IAuthService
 {
     private readonly AuthRepository _authRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IConfiguration _configuration;
 
-    public AuthService(AuthRepository authRepository, IUserRepository userRepository)
+    public AuthService(AuthRepository authRepository, IUserRepository userRepository, IConfiguration configuration)
     {
         _authRepository = authRepository;
         _userRepository = userRepository;
-        
+        _configuration = configuration;
     }
     // login service method
-    public async Task<ApiResponse<FindUserDto?>> Login(LoginRequestDto request)
+    public async Task<ApiResponse<AuthResponseDto?>> Login(LoginRequestDto request)
     {
         try
         {
             var user = await _authRepository.Login(request);
             if (user == null)
             {
-                return new ApiResponse<FindUserDto?>
+                return new ApiResponse<AuthResponseDto?>
                 {
                     Success = false,
                     Message = "Invalid email or password",
@@ -25,18 +31,25 @@ public class AuthService : IAuthService
                 };
             }
 
-            return new ApiResponse<FindUserDto?>
+            var (token, expiresAt) = GenerateJwtToken(user);
+
+            return new ApiResponse<AuthResponseDto?>
             {
                 Success = true,
                 Message = "Login successful",
-                Data = user,
+                Data = new AuthResponseDto
+                {
+                    Token = token,
+                    ExpiresAt = expiresAt,
+                    User = user
+                },
                 StatusCode = 200,
             };
         }
         catch (Exception)
         {
             // Don't expose internal error
-            return new ApiResponse<FindUserDto?>
+            return new ApiResponse<AuthResponseDto?>
             {
                 Success = false,
                 Message = "Something went wrong",
@@ -47,7 +60,7 @@ public class AuthService : IAuthService
     }
 
     // register service method
-    public async Task<ApiResponse<LoginRequestDto?>> Register(RegisterRequestDto request)
+    public async Task<ApiResponse<LoginResponseDto?>> Register(RegisterRequestDto request)
     {
         try
         {
@@ -56,7 +69,7 @@ public class AuthService : IAuthService
             var existingUser = await _userRepository.GetByEmail(request.Email);
             if (existingUser != null)
             {
-                return new ApiResponse<LoginRequestDto?>
+                return new ApiResponse<LoginResponseDto?>
                 {
                     Success = false,
                     Message = "Email already Exists",
@@ -69,7 +82,7 @@ public class AuthService : IAuthService
             var user = await _authRepository.Register(request);
             if (user == null)
             {
-                return new ApiResponse<LoginRequestDto?>
+                return new ApiResponse<LoginResponseDto?>
                 {
                     Success = false,
                     Message = "Registration failed",
@@ -78,7 +91,7 @@ public class AuthService : IAuthService
                 };
             }
 
-            return new ApiResponse<LoginRequestDto?>
+            return new ApiResponse<LoginResponseDto?>
             {
                 Success = true,
                 Message = "Registration successful",
@@ -90,7 +103,7 @@ public class AuthService : IAuthService
         catch (Exception)
         {
             // Don't expose internal error
-            return new ApiResponse<LoginRequestDto?>
+            return new ApiResponse<LoginResponseDto?>
             {
                 Success = false,
                 Message = "Something went wrong",
@@ -98,4 +111,35 @@ public class AuthService : IAuthService
             };
         }
     }
+
+    private (string Token, DateTime ExpiresAt) GenerateJwtToken(LoginResponseDto user)
+    {
+        var jwtSettings = _configuration.GetSection("Jwt");
+        var key = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? string.Empty)
+        );
+
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var expiresAt = DateTime.UtcNow.AddMinutes(
+            Convert.ToDouble(jwtSettings["DurationInMinutes"])
+        );
+
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Role)
+        };
+
+        var token = new JwtSecurityToken(
+            issuer: jwtSettings["Issuer"],
+            audience: jwtSettings["Audience"],
+            claims: claims,
+            expires: expiresAt,
+            signingCredentials: creds
+        );
+
+        return (new JwtSecurityTokenHandler().WriteToken(token), expiresAt);
+    }
+
 }

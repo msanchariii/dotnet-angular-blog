@@ -9,11 +9,11 @@ public class BookmarkService : IBookmarkService
         _logger = logger;
     }
 
-    public async Task<ApiResponse<object?>> ToggleBookmark(ToggleBookmarkRequestDto request)
+    public async Task<ApiResponse<object?>> ToggleBookmark(Guid userId, Guid blogId)
     {
         try
         {
-            var isBookmarked = await _bookmarkRepository.ToggleBookmark(request.UserId, request.BlogId);
+            var isBookmarked = await _bookmarkRepository.ToggleBookmark(userId, blogId);
 
             return new ApiResponse<object?>
             {

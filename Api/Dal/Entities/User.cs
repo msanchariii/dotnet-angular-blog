@@ -36,6 +36,10 @@ public partial class User
     [Column("is_deleted")]
     public bool IsDeleted { get; set; }
 
+    [Column("role")]
+    [StringLength(20)]
+    public string Role { get; set; } = null!;
+
     [InverseProperty("AuthorNavigation")]
     public virtual ICollection<Blog> Blogs { get; set; } = new List<Blog>();
 }

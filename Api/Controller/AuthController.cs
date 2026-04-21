@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -12,12 +13,13 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ApiResponse<FindUserDto?>> Login([FromBody] LoginRequestDto request)
+    [AllowAnonymous]
+    public async Task<ApiResponse<AuthResponseDto?>> Login([FromBody] LoginRequestDto request)
     {
         // validation: check if email and password are provided
         if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
         {
-            return new ApiResponse<FindUserDto?>
+            return new ApiResponse<AuthResponseDto?>
             {
                 Success = false,
                 Message = "Email and password are required",
@@ -32,7 +34,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception)
         {
-            return new ApiResponse<FindUserDto?>
+            return new ApiResponse<AuthResponseDto?>
             {
                 Success = false,
                 Message = "Internal server error",
@@ -43,12 +45,13 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<ApiResponse<LoginRequestDto?>> Register([FromBody] RegisterRequestDto request)
+    [AllowAnonymous]
+    public async Task<ApiResponse<LoginResponseDto?>> Register([FromBody] RegisterRequestDto request)
     {
         // validation: check if all required fields are provided
         if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password) || string.IsNullOrEmpty(request.FirstName) || string.IsNullOrEmpty(request.LastName))
         {
-            return new ApiResponse<LoginRequestDto?>
+            return new ApiResponse<LoginResponseDto?>
             {
                 Success = false,
                 Message = "All fields are required",
@@ -63,7 +66,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception)
         {
-            return new ApiResponse<LoginRequestDto?>
+            return new ApiResponse<LoginResponseDto?>
             {
                 Success = false,
                 Message = "Internal server error",

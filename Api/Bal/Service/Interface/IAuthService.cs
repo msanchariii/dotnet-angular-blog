@@ -1,6 +1,6 @@
 public interface IAuthService
 {
-    Task<ApiResponse<FindUserDto?>> Login(LoginRequestDto request);
+    Task<ApiResponse<AuthResponseDto?>> Login(LoginRequestDto request);
 
-    Task<ApiResponse<LoginRequestDto?>> Register(RegisterRequestDto request);
+    Task<ApiResponse<LoginResponseDto?>> Register(RegisterRequestDto request);
 }

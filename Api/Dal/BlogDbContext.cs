@@ -35,7 +35,6 @@ public partial class BlogDbContext : DbContext
 
             entity.Property(e => e.Id).HasDefaultValueSql("gen_random_uuid()");
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
-            entity.Property(e => e.IsPublished).HasDefaultValue(true);
 
             entity.HasOne(d => d.AuthorNavigation).WithMany(p => p.Blogs)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -83,6 +82,7 @@ public partial class BlogDbContext : DbContext
 
             entity.Property(e => e.Id).HasDefaultValueSql("gen_random_uuid()");
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.Role).HasDefaultValueSql("'User'::character varying");
         });
 
         OnModelCreatingPartial(modelBuilder);

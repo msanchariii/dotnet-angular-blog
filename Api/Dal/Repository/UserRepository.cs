@@ -14,7 +14,7 @@ public class UserRepository : IUserRepository
     public async Task<FindUserDto?> GetByEmail(string email)
     {
         using var connection = _context.CreateConnection();
-        var query = "SELECT id AS UserId, email AS Email, first_name AS FirstName, last_name AS LastName FROM users WHERE email = @Email";
+        var query = "SELECT id AS UserId, email AS Email, first_name AS FirstName, last_name AS LastName, COALESCE(role, 'User') AS Role FROM users WHERE email = @Email";
         var result = await connection.QueryFirstOrDefaultAsync<FindUserDto>(query, new { Email = email });
         return result;
     }
@@ -22,7 +22,7 @@ public class UserRepository : IUserRepository
     public async Task<IEnumerable<FindUserDto>> GetAllUsers()
     {
         using var connection = _context.CreateConnection();
-        var query = @"SELECT id AS UserId, email AS Email, first_name AS FirstName, last_name AS LastName
+        var query = @"SELECT id AS UserId, email AS Email, first_name AS FirstName, last_name AS LastName, COALESCE(role, 'User') AS Role
                       FROM users";
 
         return await connection.QueryAsync<FindUserDto>(query);
@@ -31,7 +31,7 @@ public class UserRepository : IUserRepository
     public async Task<FindUserDto?> GetUserById(Guid userId)
     {
         using var connection = _context.CreateConnection();
-        var query = @"SELECT id AS UserId, email AS Email, first_name AS FirstName, last_name AS LastName
+        var query = @"SELECT id AS UserId, email AS Email, first_name AS FirstName, last_name AS LastName, COALESCE(role, 'User') AS Role
                       FROM users
                       WHERE id = @UserId";
 

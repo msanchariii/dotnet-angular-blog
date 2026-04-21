@@ -1,4 +1,4 @@
-public class FindUserDto
+public class LoginResponseDto
 {
     public required Guid UserId { get; set; }
     public required string Email { get; set; }
