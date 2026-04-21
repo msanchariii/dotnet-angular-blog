@@ -45,6 +45,26 @@ public class BlogsController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin")]
+    [HttpGet("admin/all")]
+    public async Task<ApiResponse<IEnumerable<FindBlogDto>>> GetAllBlogsForAdmin([FromQuery] FindAllBlogsParameters @params)
+    {
+        try
+        {
+            return await _blogService.GetAllBlogsForAdmin(@params);
+        }
+        catch
+        {
+            return new ApiResponse<IEnumerable<FindBlogDto>>
+            {
+                Success = false,
+                Message = "Internal server error",
+                Data = Enumerable.Empty<FindBlogDto>(),
+                StatusCode = 500
+            };
+        }
+    }
+
     [Authorize(Policy = "UserOrAdmin")]
     [HttpGet("get-blogs-by-user/{userId}")]
     public async Task<ApiResponse<IEnumerable<FindBlogDto>>> GetBlogsByUser(Guid userId)

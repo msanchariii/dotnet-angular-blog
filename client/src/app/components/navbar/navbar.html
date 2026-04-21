@@ -3,7 +3,7 @@
 >
   <nav class="">
     <ul class="flex gap-4 md:gap-8 items-center">
-      <li>
+      <li *ngIf="isLoggedIn">
         <a href="/new-blog" class="cursor-pointer">
           <button
             class="bg-white p-1 text-lg cursor-pointer text-purple-900 rounded-full curson-pointer"
@@ -23,7 +23,7 @@
           </button>
         </a>
       </li>
-      <li>
+      <li *ngIf="isLoggedIn">
         <a
           routerLink="/blog"
           routerLinkActive="border-b-2 border-white"
@@ -35,15 +35,18 @@
           Feed
         </a>
       </li>
-      <li>
+      <li *ngIf="isLoggedIn">
         <a routerLink="/bookmarks" routerLinkActive="border-b-2 border-white"> Bookmarks </a>
       </li>
-      <li>
+      <li *ngIf="isLoggedIn">
         <a routerLink="/profile" routerLinkActive="border-b-2 border-white"> My Blogs </a>
+      </li>
+      <li *ngIf="isLoggedIn && isAdmin">
+        <a routerLink="/admin/blogs" routerLinkActive="border-b-2 border-white"> All Blogs </a>
       </li>
     </ul>
   </nav>
-  <div>
+  <div *ngIf="isLoggedIn; else authLinks">
     <span class="font-medium p-1 rounded mr-4">{{ userEmail }}</span>
     <button
       type="button"
@@ -53,4 +56,10 @@
       Logout
     </button>
   </div>
+  <ng-template #authLinks>
+    <div class="flex gap-3">
+      <a routerLink="/login" class="hover:underline">Login</a>
+      <a routerLink="/register" class="hover:underline">Register</a>
+    </div>
+  </ng-template>
 </header>

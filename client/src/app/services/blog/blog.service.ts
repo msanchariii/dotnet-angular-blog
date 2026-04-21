@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { ApiResponse } from '../../model/ApiResponse';
 import { FindBlog, FindBlogExtended } from '../../model/FindBlog';
-import { CreateBlogRequest } from '../../model/create-blog-request';
 
 @Injectable({
   providedIn: 'root',
@@ -22,17 +21,53 @@ export class BlogService {
     CategoryId?: string;
   }): Observable<FindBlogExtended[]> {
     const query = new URLSearchParams({ pageSize: params?.PageSize?.toString() ?? '10' });
+
     if (params?.PageNo) {
       query.set('PageNumber', params.PageNo.toString());
     }
+
     if (params?.SortBy) {
       query.set('SortBy', params.SortBy);
     }
+
     if (params?.CategoryId) {
       query.set('Category', params.CategoryId);
     }
 
     return this.http.get<ApiResponse<FindBlog[]>>(`/api/blogs?${query.toString()}`).pipe(
+      map(
+        (response) =>
+          response.data?.map((blog) => ({
+            ...blog,
+            readTime: this.getReadTime(blog.content),
+            avatarColor: this.getAvatarColor(blog.authorName),
+            initials: this.getInitials(blog.authorName),
+          })) ?? [],
+      ),
+    );
+  }
+
+  findBlogsForAdmin(params?: {
+    PageSize?: 5 | 10 | 20 | 50 | 100;
+    PageNo?: number;
+    SortBy?: 'newest' | 'oldest' | 'popular';
+    CategoryId?: string;
+  }): Observable<FindBlogExtended[]> {
+    const query = new URLSearchParams({ pageSize: params?.PageSize?.toString() ?? '10' });
+
+    if (params?.PageNo) {
+      query.set('PageNumber', params.PageNo.toString());
+    }
+
+    if (params?.SortBy) {
+      query.set('SortBy', params.SortBy);
+    }
+
+    if (params?.CategoryId) {
+      query.set('Category', params.CategoryId);
+    }
+
+    return this.http.get<ApiResponse<FindBlog[]>>(`/api/blogs/admin/all?${query.toString()}`).pipe(
       map(
         (response) =>
           response.data?.map((blog) => ({
@@ -62,10 +97,9 @@ export class BlogService {
   findBlogById(blogId: string): Observable<FindBlogExtended | null> {
     return this.http.get<ApiResponse<FindBlog>>(`/api/blogs/${blogId}`).pipe(
       map((response) => {
-        // console.log(response);
-
         const blog = response.data;
         if (!blog) return null;
+
         return {
           ...blog,
           readTime: this.getReadTime(blog.content),
@@ -95,6 +129,16 @@ export class BlogService {
     return this.http.delete<ApiResponse<any>>(`/api/blogs/${blogId}`);
   }
 
+  updateBlog(blogId: string, payload: any): Observable<ApiResponse<any>> {
+    return this.http.put<ApiResponse<any>>(`/api/blogs/${blogId}`, payload);
+  }
+
+  togglePublish(blogId: string, isPublished: boolean): Observable<ApiResponse<FindBlog>> {
+    return this.http.patch<ApiResponse<FindBlog>>(`/api/blogs/${blogId}/publish`, {
+      isPublished,
+    });
+  }
+
   getInitials(author: string): string {
     const names = author.trim().split(/\s+/);
     return names
@@ -104,7 +148,7 @@ export class BlogService {
   }
 
   getReadTime(content: string): string {
-    const wordsPerMinute = 150; // Average reading speed
+    const wordsPerMinute = 150;
     const words = content.trim().split(/\s+/).length;
     const minutes = Math.ceil(words / wordsPerMinute);
     return `${minutes} min read`;
@@ -132,31 +176,28 @@ export class BlogService {
       month: 'short',
       day: 'numeric',
     };
+
     return date.toLocaleDateString('en-US', options);
   }
 
   generateTags(content: string): string[] {
     const tagSet = new Set<string>();
     const words = content.split(/\s+/);
+
     words.forEach((word) => {
       if (word.startsWith('#') && word.length > 1) {
         tagSet.add(word.substring(1).toLowerCase());
       }
     });
+
     return Array.from(tagSet);
   }
 
   sanitizeBlogContent(content: string): string {
-    // change &nbsp; to space
     return content.replace(/&nbsp;/g, ' ');
   }
 
   sanitizeBlogPreview(content: string): string {
-    // change &nbsp; to space and remove all html tags
     return content.replace(/&nbsp;/g, ' ').replace(/<[^>]*>/g, '');
-  }
-
-  updateBlog(blogId: string, payload: any): Observable<ApiResponse<any>> {
-    return this.http.put<ApiResponse<any>>(`/api/blogs/${blogId}`, payload);
   }
 }

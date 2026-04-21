@@ -28,8 +28,7 @@ export class Layout {
       return;
     }
 
-    const userId = this.authService.getUserId();
-    if (!userId) {
+    if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/login']);
     }
   }

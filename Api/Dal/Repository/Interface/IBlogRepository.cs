@@ -1,6 +1,7 @@
 public interface IBlogRepository
 {
     Task<IEnumerable<FindBlogWithBookmark>> GetAllBlogs(FindAllBlogsParameters @params);
+    Task<IEnumerable<FindBlogDto>> GetAllBlogsForAdmin(FindAllBlogsParameters @params);
     Task<IEnumerable<FindBlogDto>> GetBlogsByUser(Guid userId);
     Task<FindBlogDto?> GetBlogById(Guid blogId);
     Task<FindBlogDto?> CreateBlog(Guid userId, CreateBlogRequestDto request);

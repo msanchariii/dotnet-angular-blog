@@ -7,6 +7,9 @@ import { Layout } from './components/layout/layout';
 import { NewBlog } from './pages/new-blog/new-blog';
 import { MyBookmarks } from './components/my-bookmarks/my-bookmarks';
 import { MyBlog } from './pages/my-blog/my-blog';
+import { authGuard } from './guards/auth.guard';
+import { adminGuard } from './guards/admin.guard';
+import { AdminBlogs } from './pages/admin-blogs/admin-blogs';
 
 export const routes: Routes = [
   {
@@ -22,7 +25,13 @@ export const routes: Routes = [
   {
     path: '',
     component: Layout,
+    canActivate: [authGuard],
     children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'blog',
+      },
       {
         path: 'new-blog',
         component: NewBlog,
@@ -37,6 +46,12 @@ export const routes: Routes = [
         path: 'profile',
         component: MyBlog,
         title: 'My Blogs',
+      },
+      {
+        path: 'admin/blogs',
+        component: AdminBlogs,
+        title: 'Manage Blogs',
+        canActivate: [adminGuard],
       },
       {
         path: 'blog/:blogid',

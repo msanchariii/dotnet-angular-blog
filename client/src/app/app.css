@@ -184,3 +184,7 @@ main {
   display: flex !important;
   line-clamp: 5;
 }
+
+button {
+  @apply cursor-pointer;
+}

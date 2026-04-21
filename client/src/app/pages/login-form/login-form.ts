@@ -42,8 +42,8 @@ export class LoginForm {
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
         next: (response) => {
-          if (response.success && response.statusCode === 200) {
-            this.router.navigate(['/']);
+          if (response.success && response.statusCode === 200 && response.data) {
+            this.router.navigate(['/blog']);
             return;
           }
 

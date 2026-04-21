@@ -1,6 +1,7 @@
 public interface IBlogService
 {
     Task<ApiResponse<IEnumerable<FindBlogWithBookmark>>> GetAllBlogs(FindAllBlogsParameters @params);
+    Task<ApiResponse<IEnumerable<FindBlogDto>>> GetAllBlogsForAdmin(FindAllBlogsParameters @params);
     Task<ApiResponse<IEnumerable<FindBlogDto>>> GetBlogsByUser(Guid userId);
     Task<ApiResponse<FindBlogDto?>> GetBlogById(Guid blogId);
     Task<ApiResponse<FindBlogDto?>> CreateBlog(Guid userId, CreateBlogRequestDto request);

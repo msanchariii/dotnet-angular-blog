@@ -125,6 +125,82 @@ public class BlogRepository : IBlogRepository
 
     return await connection.QueryAsync<FindBlogWithBookmark>(sql.ToString(), parameters);
 }
+
+public async Task<IEnumerable<FindBlogDto>> GetAllBlogsForAdmin(FindAllBlogsParameters @params)
+{
+    using var connection = _context.CreateConnection();
+
+    var sql = new StringBuilder();
+    var parameters = new DynamicParameters();
+
+    var pageNumber = Math.Max(1, @params.PageNumber);
+    var pageSize = Math.Max(1, @params.PageSize);
+
+    sql.Append(@"
+        SELECT 
+            b.id AS BlogId,
+            b.author AS UserId,
+            u.first_name || ' ' || u.last_name AS AuthorName,
+            b.blog_title AS Title,
+            b.blog_content AS Content,
+            b.category_id AS CategoryId,
+            c.category_name AS CategoryName,
+            COALESCE(array_agg(DISTINCT t.tag_name) FILTER (WHERE t.tag_name IS NOT NULL), ARRAY[]::text[]) AS Tags,
+            b.created_at AS CreatedAt,
+            b.is_published AS IsPublished
+        FROM blogs b
+        LEFT JOIN users u ON u.id = b.author AND u.is_deleted = false
+        LEFT JOIN category c ON c.id = b.category_id
+        LEFT JOIN tag_blog tb ON tb.blog_id = b.id
+        LEFT JOIN tag t ON t.id = tb.tag_id
+        WHERE b.is_deleted = false
+    ");
+
+    if (!string.IsNullOrWhiteSpace(@params.Category) && Guid.TryParse(@params.Category, out var categoryId))
+    {
+        sql.Append(" AND b.category_id = @CategoryId ");
+        parameters.Add("@CategoryId", categoryId);
+    }
+
+    if (@params.Tags is { Length: > 0 })
+    {
+        sql.Append(@"
+            AND b.id IN (
+                SELECT tb2.blog_id
+                FROM tag_blog tb2
+                JOIN tag t2 ON t2.id = tb2.tag_id
+                WHERE t2.tag_name = ANY(@Tags)
+            )
+        ");
+
+        parameters.Add("@Tags", @params.Tags);
+    }
+
+    sql.Append(@"
+        GROUP BY 
+            b.id, b.author, u.first_name, u.last_name,
+            b.blog_title, b.blog_content, b.category_id,
+            c.category_name, b.created_at, b.is_published
+    ");
+
+    var sort = @params.SortBy?.Trim().ToLowerInvariant();
+    if (sort == "oldest")
+    {
+        sql.Append(" ORDER BY b.created_at ASC ");
+    }
+    else
+    {
+        sql.Append(" ORDER BY b.created_at DESC ");
+    }
+
+    sql.Append(" LIMIT @Limit OFFSET @Offset ");
+
+    parameters.Add("@Limit", pageSize);
+    parameters.Add("@Offset", (pageNumber - 1) * pageSize);
+
+    return await connection.QueryAsync<FindBlogDto>(sql.ToString(), parameters);
+}
+
 public async Task<IEnumerable<FindBlogDto>> GetBlogsByUser(Guid userId)
     {
         using var connection = _context.CreateConnection();

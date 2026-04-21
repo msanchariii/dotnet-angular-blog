@@ -1,21 +1,32 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Router, isActive, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
 export class Navbar {
   authService: AuthService;
   router = inject(Router);
-  userEmail: string | null;
 
   constructor(authService: AuthService) {
     this.authService = authService;
-    this.userEmail = authService.getUserEmail();
+  }
+
+  get userEmail(): string | null {
+    return this.authService.getUserEmail();
+  }
+
+  get isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();
+  }
+
+  get isAdmin(): boolean {
+    return this.authService.getUserRole() === 'Admin';
   }
 
   // isNavbarLinkActive(path: string): boolean {

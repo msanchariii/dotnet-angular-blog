@@ -32,6 +32,31 @@ public class BlogService : IBlogService
         }
     }
 
+    public async Task<ApiResponse<IEnumerable<FindBlogDto>>> GetAllBlogsForAdmin(FindAllBlogsParameters @params)
+    {
+        try
+        {
+            var blogs = await _blogRepository.GetAllBlogsForAdmin(@params);
+            return new ApiResponse<IEnumerable<FindBlogDto>>
+            {
+                Success = true,
+                Message = "Blogs fetched successfully",
+                Data = blogs,
+                StatusCode = 200
+            };
+        }
+        catch
+        {
+            return new ApiResponse<IEnumerable<FindBlogDto>>
+            {
+                Success = false,
+                Message = "Something went wrong",
+                Data = Enumerable.Empty<FindBlogDto>(),
+                StatusCode = 500
+            };
+        }
+    }
+
     public async Task<ApiResponse<IEnumerable<FindBlogDto>>> GetBlogsByUser(Guid userId)
     {
         try
