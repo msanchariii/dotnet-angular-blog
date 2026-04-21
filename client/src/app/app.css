@@ -188,3 +188,14 @@ main {
 button {
   @apply cursor-pointer;
 }
+
+btn {
+  @apply inline-block px-4 py-2 rounded transition-colors duration-300;
+}
+btn-success {
+  @apply bg-green-500 text-white hover:bg-green-600;
+}
+
+btn-danger {
+  @apply bg-red-500 text-white hover:bg-red-600;
+}

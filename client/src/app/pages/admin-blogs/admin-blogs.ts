@@ -7,6 +7,7 @@ import { FindBlogExtended } from '../../model/FindBlog';
 import { AuthService } from '../../services/auth';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-admin-blogs',
@@ -67,38 +68,62 @@ export class AdminBlogs {
   }
 
   deleteBlog(blogId: string) {
-    const confirmed = globalThis.confirm('Delete this blog?');
-    if (!confirmed) {
-      return;
-    }
-
-    this.blogService.deleteBlog(blogId).subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.blogs = this.blogs.filter((blog) => blog.blogId !== blogId);
-          this.messageService.add({
-            severity: 'info',
-            summary: 'Info',
-            detail: 'Blog Deleted',
-          });
-          this.cdr.detectChanges();
-          return;
-        }
-
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: response.message || 'Unable to delete blog.',
-        });
-      },
-      error: (err) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: err?.error?.message || 'Unable to delete blog.',
-        });
-      },
+    const swalWithBootstrapButtons = Swal.mixin({
+      buttonsStyling: true,
     });
+
+    swalWithBootstrapButtons
+      .fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true,
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          this.blogService.deleteBlog(blogId).subscribe({
+            next: (response) => {
+              if (response.success) {
+                this.blogs = this.blogs.filter((blog) => blog.blogId !== blogId);
+                this.cdr.detectChanges();
+                this.messageService.add({
+                  severity: 'info',
+                  summary: 'Info',
+                  detail: 'Blog Deleted',
+                });
+                swalWithBootstrapButtons.fire({
+                  title: 'Deleted!',
+                  text: 'Blog has been deleted.',
+                  icon: 'success',
+                });
+                return;
+              }
+
+              swalWithBootstrapButtons.fire({
+                title: 'Error',
+                text: response.message || 'Unable to delete blog.',
+                icon: 'error',
+              });
+            },
+            error: (err) => {
+              swalWithBootstrapButtons.fire({
+                title: 'Error',
+                text: err?.error?.message || 'Unable to delete blog.',
+                icon: 'error',
+              });
+            },
+          });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          swalWithBootstrapButtons.fire({
+            title: 'Cancelled',
+            text: 'Your blog is safe :)',
+            icon: 'error',
+          });
+        }
+      });
   }
 
   togglePublish(blog: FindBlogExtended) {
