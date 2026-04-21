@@ -4,7 +4,7 @@
       @for (blog of blogData; track blog.blogId) {
         <app-blog-card
           [blogTitle]="blog.title"
-          [blogContent]="blog.content"
+          [blogContent]="sanitizePreview(blog.content)"
           [category]="blog.categoryName"
           [author]="blog.authorName"
           [tags]="blog.tags"

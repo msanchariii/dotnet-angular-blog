@@ -8,6 +8,7 @@ import Aura from '@primeuix/themes/aura';
 import { MyPreset } from './mypreset';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './services/auth-interceptor';
+import { MessageService } from 'primeng/api';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -23,5 +24,6 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
+    MessageService,
   ],
 };

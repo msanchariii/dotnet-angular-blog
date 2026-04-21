@@ -22,6 +22,10 @@ export class MyBookmarks {
 
   blogData: FindBlogExtended[] = [];
 
+  sanitizePreview(content: string): string {
+    return this.blogService.sanitizeBlogPreview(content);
+  }
+
   ngOnInit() {
     this.blogService.getMyBookmarks().subscribe((blogs) => {
       this.blogData = blogs;

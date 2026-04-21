@@ -12,79 +12,84 @@
       Refresh
     </button>
   </div>
-
-  <div
-    *ngIf="errorMessage"
-    class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700"
-  >
-    {{ errorMessage }}
-  </div>
+  @if (errorMessage) {
+    <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+      {{ errorMessage }}
+    </div>
+  }
   @if (actionMessage) {
     <div class="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-700">
       {{ actionMessage }}
     </div>
   }
+  @if (blogs.length === 0 && !isLoading) {
+    <div class="rounded-xl bg-white p-6 shadow-sm text-slate-600">No blogs found.</div>
+  }
 
-  <div *ngIf="isLoading" class="rounded-xl bg-white p-6 shadow-sm text-slate-600">
-    Loading blogs...
-  </div>
-
-  <div
-    *ngIf="!isLoading"
-    class="overflow-x-auto rounded-2xl bg-white shadow-sm border border-slate-200"
-  >
-    <table class="min-w-full divide-y divide-slate-200 text-sm">
-      <thead class="bg-slate-50 text-slate-600 uppercase tracking-wide text-xs">
-        <tr>
-          <th class="px-6 py-3 text-left">User</th>
-          <th class="px-6 py-3 text-left">Title</th>
-          <th class="px-6 py-3 text-left">Created At</th>
-          <th class="px-6 py-3 text-left">Status</th>
-          <th class="px-6 py-3 text-right">Actions</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-slate-200">
-        <tr *ngFor="let blog of blogs" class="hover:bg-slate-50">
-          <td class="px-6 py-4 text-slate-700">{{ blog.authorName }}</td>
-          <td class="px-6 py-4 font-medium text-slate-900">{{ blog.title }}</td>
-          <td class="px-6 py-4 text-slate-600">{{ formatDate(blog.createdAt) }}</td>
-          <td class="px-6 py-4">
-            <span
-              class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
-              [class.bg-emerald-100]="blog.isPublished"
-              [class.text-emerald-700]="blog.isPublished"
-              [class.bg-amber-100]="!blog.isPublished"
-              [class.text-amber-700]="!blog.isPublished"
-            >
-              {{ blog.isPublished ? 'Published' : 'Pending' }}
-            </span>
-          </td>
-          <td class="px-6 py-4">
-            <div class="flex justify-end gap-2">
-              <a
-                [routerLink]="viewBlog(blog.blogId)"
-                class="rounded-lg border border-slate-300 px-3 py-2 text-slate-700 hover:bg-slate-100"
-              >
-                View
-              </a>
-              <button
-                type="button"
-                (click)="togglePublish(blog)"
-                class="rounded-lg bg-emerald-600 px-3 py-2 text-white hover:bg-emerald-500"
-              >
-                {{ blog.isPublished ? 'Unpublish' : 'Approve' }}
-              </button>
-              <button
-                type="button"
-                (click)="deleteBlog(blog.blogId)"
-                class="rounded-lg bg-red-100 px-3 py-2 text-red-600 border border-red-300 hover:bg-red-200 font-semibold"
-              >
-                Delete
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  @if (isLoading) {
+    <div class="rounded-xl bg-white p-6 shadow-sm text-slate-600">Loading blogs...</div>
+  }
+  @if (!isLoading && blogs.length > 0) {
+    <div class="overflow-x-auto rounded-2xl bg-white shadow-sm border border-slate-200">
+      <table class="min-w-full divide-y divide-slate-200 text-sm">
+        <thead class="bg-slate-50 text-slate-600 uppercase tracking-wide text-xs">
+          <tr>
+            <th class="px-6 py-3 text-left">User</th>
+            <th class="px-6 py-3 text-left">Title</th>
+            <th class="px-6 py-3 text-left">Created At</th>
+            <th class="px-6 py-3 text-left">Status</th>
+            <th class="px-6 py-3 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          @for (blog of blogs; track $index) {
+            <tr class="hover:bg-slate-50">
+              <td class="px-6 py-4 text-slate-700">{{ blog.authorName }}</td>
+              <td class="px-6 py-4 font-medium text-slate-900">{{ blog.title }}</td>
+              <td class="px-6 py-4 text-slate-600">{{ formatDate(blog.createdAt) }}</td>
+              <td class="px-6 py-4">
+                <span
+                  class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                  [class.bg-emerald-100]="blog.isPublished"
+                  [class.text-emerald-700]="blog.isPublished"
+                  [class.bg-amber-100]="!blog.isPublished"
+                  [class.text-amber-700]="!blog.isPublished"
+                >
+                  {{ blog.isPublished ? 'Published' : 'Pending' }}
+                </span>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex justify-end gap-2">
+                  <a
+                    [routerLink]="viewBlog(blog.blogId)"
+                    class="rounded-lg border border-slate-300 px-3 py-2 text-slate-700 hover:bg-slate-100 cursor-pointer"
+                  >
+                    View
+                  </a>
+                  <button
+                    type="button"
+                    (click)="togglePublish(blog)"
+                    class="rounded-lg px-4 py-2 font-semibold text-white w-28 transition-all duration-200 cursor-pointer"
+                    [ngClass]="{
+                      'bg-green-700 hover:bg-green-800': !blog.isPublished,
+                      'bg-red-500 hover:bg-red-600': blog.isPublished,
+                    }"
+                  >
+                    {{ blog.isPublished ? 'Unpublish' : 'Approve' }}
+                  </button>
+                  <button
+                    type="button"
+                    (click)="deleteBlog(blog.blogId)"
+                    class="rounded-lg bg-red-100 px-3 py-2 text-red-600 border border-red-300 hover:bg-red-200 font-semibold cursor-pointer"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
 </div>
