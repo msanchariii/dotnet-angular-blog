@@ -110,7 +110,7 @@ export class NewBlog implements OnInit {
             this.tags = [];
 
             // Redirect to blog list page on success
-            this.router.navigate(['/']);
+            this.router.navigate(['/blog']);
 
             return;
           }

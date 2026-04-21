@@ -39,7 +39,7 @@ export class Navbar {
 
   goToFeed() {
     // This method can be used if you want to navigate programmatically
-    this.router.navigate(['/']);
+    this.router.navigate(['/blog']);
   }
 
   onLogout() {
