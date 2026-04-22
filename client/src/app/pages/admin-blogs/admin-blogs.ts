@@ -25,7 +25,7 @@ export class AdminBlogs {
   ) {}
 
   blogs: FindBlogExtended[] = [];
-  isLoading = false;
+  isLoading = true;
   errorMessage = '';
   actionMessage = '';
 
@@ -34,7 +34,6 @@ export class AdminBlogs {
   }
 
   loadBlogs() {
-    this.isLoading = true;
     this.errorMessage = '';
 
     this.blogService
@@ -48,9 +47,13 @@ export class AdminBlogs {
       .subscribe({
         next: (blogs) => {
           this.blogs = blogs;
+          this.cdr.detectChanges();
+          this.isLoading = false;
         },
         error: (err) => {
           this.errorMessage = err?.error?.message || 'Unable to load blogs.';
+          this.cdr.detectChanges();
+          this.isLoading = false;
         },
       });
   }

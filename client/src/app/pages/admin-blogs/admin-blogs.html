@@ -7,21 +7,17 @@
     <button
       type="button"
       (click)="loadBlogs()"
-      class="px-4 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-800"
+      class="px-4 py-2 rounded-lg cursor-pointer bg-purple-900 text-white hover:bg-purple-950 font-semibold"
     >
       Refresh
     </button>
   </div>
-  @if (errorMessage) {
+  <!-- @if (!isLoading && errorMessage) {
     <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700">
       {{ errorMessage }}
     </div>
-  }
-  @if (actionMessage) {
-    <div class="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-700">
-      {{ actionMessage }}
-    </div>
-  }
+  } -->
+
   @if (blogs.length === 0 && !isLoading) {
     <div class="rounded-xl bg-white p-6 shadow-sm text-slate-600">No blogs found.</div>
   }

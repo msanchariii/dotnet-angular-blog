@@ -1,10 +1,11 @@
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { BookmarkButton } from '../bookmark-button/bookmark-button';
 import { Router } from '@angular/router';
+import { BackButton } from '../back-button/back-button';
 
 @Component({
   selector: 'app-blog-card',
-  imports: [BookmarkButton],
+  imports: [BookmarkButton, BackButton],
   templateUrl: './blog-card.html',
   styleUrl: './blog-card.css',
 })

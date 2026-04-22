@@ -25,6 +25,10 @@ export class BlogDetails implements OnInit {
   protected avatarColor: string | undefined;
   protected tags: string[] = [];
 
+  goBack() {
+    window.history.back();
+  }
+
   ngOnInit() {
     this.blogid = this.activateRoute.snapshot.paramMap.get('blogid') || '';
     if (this.blogid) {
