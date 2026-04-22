@@ -125,13 +125,23 @@ public class AuthService : IAuthService
             Convert.ToDouble(jwtSettings["DurationInMinutes"])
         );
 
-        var claims = new[]
+        var baseClaims = new List<Claim>
         {
             new Claim("userId", user.UserId.ToString()),
             new Claim("name", user.FirstName + " " + user.LastName),
             new Claim("role", user.Role),
             new Claim("email", user.Email)
         };
+
+        var permissions = user.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase)
+            ? new[] { "can-approve-blogs", "can-edit-all-blogs" }
+            : new[] { "can-view-blogs", "can-post-blogs" };
+
+        baseClaims.AddRange(permissions.Select(p => new Claim("permissions", p)));
+
+        var claims = baseClaims.ToArray();
+
+        
 
         var token = new JwtSecurityToken(
             issuer: jwtSettings["Issuer"],

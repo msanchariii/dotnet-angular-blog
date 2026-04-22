@@ -65,9 +65,9 @@ export class AuthService {
     exp: number;
     iss: string;
     aud: string;
+    permissions: string[];
   } | null {
     try {
-      console.log('Decoding token:', token);
       return jwtDecode(token);
     } catch (error) {
       console.error('Error decoding token:', error);
@@ -77,7 +77,7 @@ export class AuthService {
 
   getToken(): string | null {
     const name = this.canUseStorage() ? localStorage.getItem(this.TOKEN_KEY) : null;
-    console.log('Retrieved token:', name);
+    // console.log('Retrieved token:', name);
     return name;
   }
 
@@ -118,7 +118,19 @@ export class AuthService {
     localStorage.removeItem(this.TOKEN_KEY);
   }
 
+  hasPermission(permission: Permission): boolean {
+    console.log('Calling hasPermission()');
+
+    const token = this.getToken();
+    if (!token) return false;
+
+    const decoded = this.decodeAuthToken(token);
+    return decoded?.permissions?.includes(permission) || false;
+  }
+
   isLoggedIn(): boolean {
     return !!this.getToken();
   }
 }
+
+type Permission = 'can-post-blogs' | 'can-view-blogs' | 'can-approve-blogs' | 'can-edit-all-blogs';

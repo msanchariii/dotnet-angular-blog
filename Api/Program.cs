@@ -5,11 +5,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
-// using soumyadip_da_hw.Bal.Services;
-// using soumyadip_da_hw.Bal.Services.Interfaces;
-// using soumyadip_da_hw.Dal;
-// using soumyadip_da_hw.Dal.Interface;
-// using soumyadip_da_hw.Dal.Repositories;
 
 
 var builder = WebApplication.CreateBuilder(args);

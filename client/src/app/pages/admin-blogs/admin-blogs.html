@@ -46,7 +46,9 @@
             <tr class="hover:bg-slate-50">
               <td class="px-6 py-4 text-slate-700">{{ blog.authorName }}</td>
               <td class="px-6 py-4 font-medium text-slate-900">{{ blog.title }}</td>
-              <td class="px-6 py-4 text-slate-600">{{ formatDate(blog.createdAt) }}</td>
+              <td class="px-6 py-4 text-slate-600 w-40">
+                {{ formatDate(blog.createdAt) }}
+              </td>
               <td class="px-6 py-4">
                 <span
                   class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"

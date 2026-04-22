@@ -42,7 +42,7 @@
         <li>
           <a routerLink="/profile" routerLinkActive="border-b-2 border-white"> My Blogs </a>
         </li>
-        @if (isAdmin) {
+        @if (this.authService.hasPermission('can-approve-blogs')) {
           <li>
             <a routerLink="/admin/blogs" routerLinkActive="border-b-2 border-white"> All Blogs </a>
           </li>
