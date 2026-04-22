@@ -3,63 +3,63 @@
 >
   <nav class="">
     <ul class="flex gap-4 md:gap-8 items-center">
-      <li *ngIf="isLoggedIn">
-        <a href="/new-blog" class="cursor-pointer">
-          <button
-            class="bg-white p-1 text-lg cursor-pointer text-purple-900 rounded-full curson-pointer"
-          >
-            <!-- plus icon -->
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              stroke-width="2"
-              class="w-6 h-6"
+      @if (isLoggedIn) {
+        <li>
+          <a href="/new-blog" class="cursor-pointer">
+            <button
+              class="bg-white p-1 text-lg cursor-pointer text-purple-900 rounded-full curson-pointer"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-          </button>
-        </a>
-      </li>
-      <li *ngIf="isLoggedIn">
-        <a
-          routerLink="/blog"
-          routerLinkActive="border-b-2 border-white"
-          [routerLinkActiveOptions]="{
-            exact: true,
-            queryParams: 'ignored',
-          }"
-        >
-          Feed
-        </a>
-      </li>
-      <li *ngIf="isLoggedIn">
-        <a routerLink="/bookmarks" routerLinkActive="border-b-2 border-white"> Bookmarks </a>
-      </li>
-      <li *ngIf="isLoggedIn">
-        <a routerLink="/profile" routerLinkActive="border-b-2 border-white"> My Blogs </a>
-      </li>
-      <li *ngIf="isLoggedIn && isAdmin">
-        <a routerLink="/admin/blogs" routerLinkActive="border-b-2 border-white"> All Blogs </a>
-      </li>
+              <!-- plus icon -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                stroke-width="2"
+                class="w-6 h-6"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+            </button>
+          </a>
+        </li>
+        <li>
+          <a
+            routerLink="/blog"
+            routerLinkActive="border-b-2 border-white"
+            [routerLinkActiveOptions]="{
+              exact: true,
+              queryParams: 'ignored',
+            }"
+          >
+            Feed
+          </a>
+        </li>
+        <li>
+          <a routerLink="/bookmarks" routerLinkActive="border-b-2 border-white"> Bookmarks </a>
+        </li>
+        <li>
+          <a routerLink="/profile" routerLinkActive="border-b-2 border-white"> My Blogs </a>
+        </li>
+        @if (isAdmin) {
+          <li>
+            <a routerLink="/admin/blogs" routerLinkActive="border-b-2 border-white"> All Blogs </a>
+          </li>
+        }
+      }
     </ul>
   </nav>
-  <div *ngIf="isLoggedIn; else authLinks">
-    <span class="font-medium p-1 rounded mr-4">{{ userEmail }}</span>
-    <button
-      type="button"
-      (click)="onLogout()"
-      class="bg-white hover:bg-purple-50 cursor-pointer text-purple-900 py-1 px-2 rounded"
-    >
-      Logout
-    </button>
-  </div>
-  <ng-template #authLinks>
-    <div class="flex gap-3">
-      <a routerLink="/login" class="hover:underline">Login</a>
-      <a routerLink="/register" class="hover:underline">Register</a>
+  @if (isLoggedIn) {
+    <div>
+      <span class="font-medium p-1 rounded mr-4">{{ userName }}</span>
+      <button
+        type="button"
+        (click)="onLogout()"
+        class="bg-white hover:bg-purple-50 cursor-pointer text-purple-900 py-1 px-2 rounded"
+      >
+        Logout
+      </button>
     </div>
-  </ng-template>
+  }
 </header>

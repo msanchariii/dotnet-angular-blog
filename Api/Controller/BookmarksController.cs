@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 
 [ApiController]
 [Route("api/bookmarks")]
@@ -81,7 +80,8 @@ public class BookmarksController : ControllerBase
 
     private Guid GetCurrentUserId()
     {
-        var rawUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var rawUserId = User.FindFirst("userId")?.Value;
+
         return Guid.TryParse(rawUserId, out var userId) ? userId : Guid.Empty;
     }
 }

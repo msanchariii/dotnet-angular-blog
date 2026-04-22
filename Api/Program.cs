@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 // using soumyadip_da_hw.Bal.Services;
 // using soumyadip_da_hw.Bal.Services.Interfaces;
@@ -24,6 +25,8 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
+    options.MapInboundClaims = false;
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -33,17 +36,25 @@ builder.Services.AddAuthentication(options =>
 
         ValidIssuer = jwtSettings["Issuer"],
         ValidAudience = jwtSettings["Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(key)
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        NameClaimType = "name",
+        RoleClaimType = "role"
     };
 });
 
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy =>
-        policy.RequireRole("Admin"));
+        policy.RequireAssertion(context =>
+            string.Equals(context.User.FindFirst("role")?.Value?.Trim(), "Admin", StringComparison.OrdinalIgnoreCase)));
 
     options.AddPolicy("UserOrAdmin", policy =>
-        policy.RequireRole("User", "Admin"));
+        policy.RequireAssertion(context =>
+        {
+            var role = context.User.FindFirst("role")?.Value?.Trim();
+            return string.Equals(role, "User", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase);
+        }));
 });
 
 // Add services to the container.

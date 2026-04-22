@@ -6,17 +6,18 @@ import { LoginResponse } from '../model/LoginResponse';
 import { tap } from 'rxjs/operators';
 import { RegisterResponse } from '../model/register-response';
 import { RegisterRequest } from '../model/register-request';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private readonly TOKEN_KEY = 'authToken';
-  private readonly USER_ID_KEY = 'userId';
-  private readonly USER_EMAIL_KEY = 'userEmail';
-  private readonly USER_ROLE_KEY = 'userRole';
+  // private readonly USER_ID_KEY = 'userId';
+  // private readonly USER_EMAIL_KEY = 'userEmail';
+  // private readonly USER_ROLE_KEY = 'userRole';
 
-  constructor(private http: HttpClient) {} // Injected here
+  constructor(private http: HttpClient) {}
 
   private canUseStorage(): boolean {
     return typeof globalThis !== 'undefined' && typeof globalThis.localStorage !== 'undefined';
@@ -33,9 +34,6 @@ export class AuthService {
           if (response.statusCode === 200 && response.success && response.data) {
             if (this.canUseStorage()) {
               localStorage.setItem(this.TOKEN_KEY, response.data.token);
-              localStorage.setItem(this.USER_ID_KEY, response.data.user.userId);
-              localStorage.setItem(this.USER_EMAIL_KEY, response.data.user.email);
-              localStorage.setItem(this.USER_ROLE_KEY, response.data.user.role);
             }
           }
         }),
@@ -59,28 +57,65 @@ export class AuthService {
     };
   }
 
+  decodeAuthToken(token: string): {
+    userId: string;
+    name: string;
+    role: string;
+    email: string;
+    exp: number;
+    iss: string;
+    aud: string;
+  } | null {
+    try {
+      console.log('Decoding token:', token);
+      return jwtDecode(token);
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      return null;
+    }
+  }
+
   getToken(): string | null {
-    return this.canUseStorage() ? localStorage.getItem(this.TOKEN_KEY) : null;
+    const name = this.canUseStorage() ? localStorage.getItem(this.TOKEN_KEY) : null;
+    console.log('Retrieved token:', name);
+    return name;
   }
 
   getUserId(): string | null {
-    return this.canUseStorage() ? localStorage.getItem(this.USER_ID_KEY) : null;
+    const token = this.getToken();
+    if (!token) return null;
+
+    const decoded = this.decodeAuthToken(token);
+    return decoded ? decoded.userId : null;
   }
 
   getUserEmail(): string | null {
-    return this.canUseStorage() ? localStorage.getItem(this.USER_EMAIL_KEY) : null;
+    const token = this.getToken();
+    if (!token) return null;
+
+    const decoded = this.decodeAuthToken(token);
+    return decoded ? decoded.email : null;
   }
 
   getUserRole(): string | null {
-    return this.canUseStorage() ? localStorage.getItem(this.USER_ROLE_KEY) : null;
+    const token = this.getToken();
+    if (!token) return null;
+
+    const decoded = this.decodeAuthToken(token);
+    return decoded ? decoded.role : null;
+  }
+
+  getUserName(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    const decoded = this.decodeAuthToken(token);
+    return decoded ? decoded.name : null;
   }
 
   clearUser() {
     if (!this.canUseStorage()) return;
     localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.USER_ID_KEY);
-    localStorage.removeItem(this.USER_EMAIL_KEY);
-    localStorage.removeItem(this.USER_ROLE_KEY);
   }
 
   isLoggedIn(): boolean {

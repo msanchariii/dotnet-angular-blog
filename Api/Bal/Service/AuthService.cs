@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
+
 public class AuthService : IAuthService
 {
     private readonly AuthRepository _authRepository;
@@ -126,9 +127,10 @@ public class AuthService : IAuthService
 
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.Role)
+            new Claim("userId", user.UserId.ToString()),
+            new Claim("name", user.FirstName + " " + user.LastName),
+            new Claim("role", user.Role),
+            new Claim("email", user.Email)
         };
 
         var token = new JwtSecurityToken(

@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 
 [ApiController]
 [Route("api/blogs")]
@@ -29,6 +28,9 @@ public class BlogsController : ControllerBase
     [HttpGet]
     public async Task<ApiResponse<IEnumerable<FindBlogWithBookmark>>> GetAllBlogs([FromQuery] FindAllBlogsParameters @params)
     {
+        var currentUserId = GetCurrentUserId();
+        @params.UserId = currentUserId == Guid.Empty ? null : currentUserId;
+
         try
         {
             return await _blogService.GetAllBlogs(@params);
@@ -45,7 +47,7 @@ public class BlogsController : ControllerBase
         }
     }
 
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = "AdminOnly")]
     [HttpGet("admin/all")]
     public async Task<ApiResponse<IEnumerable<FindBlogDto>>> GetAllBlogsForAdmin([FromQuery] FindAllBlogsParameters @params)
     {
@@ -70,7 +72,7 @@ public class BlogsController : ControllerBase
     public async Task<ApiResponse<IEnumerable<FindBlogDto>>> GetBlogsByUser(Guid userId)
     {
         var currentUserId = GetCurrentUserId();
-        var isAdmin = User.IsInRole("Admin");
+        var isAdmin = IsCurrentUserAdmin();
 
         if (currentUserId == Guid.Empty)
         {
@@ -220,7 +222,7 @@ public class BlogsController : ControllerBase
     public async Task<ApiResponse<FindBlogDto?>> UpdateBlog(Guid id, [FromBody] UpdateBlogRequestDto request)
     {
         var currentUserId = GetCurrentUserId();
-        var isAdmin = User.IsInRole("Admin");
+        var isAdmin = IsCurrentUserAdmin();
 
         if (id == Guid.Empty || currentUserId == Guid.Empty || string.IsNullOrWhiteSpace(request.Title) || string.IsNullOrWhiteSpace(request.Content))
         {
@@ -254,7 +256,7 @@ public class BlogsController : ControllerBase
     public async Task<ApiResponse<object?>> SoftDeleteBlog(Guid id)
     {
         var currentUserId = GetCurrentUserId();
-        var isAdmin = User.IsInRole("Admin");
+        var isAdmin = IsCurrentUserAdmin();
 
         if (id == Guid.Empty || currentUserId == Guid.Empty)
         {
@@ -283,7 +285,7 @@ public class BlogsController : ControllerBase
         }
     }
 
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = "AdminOnly")]
     [HttpPatch("{id}/publish")]
     public async Task<ApiResponse<FindBlogDto?>> TogglePublish(Guid id, [FromBody] TogglePublishRequestDto request)
     {
@@ -316,7 +318,14 @@ public class BlogsController : ControllerBase
 
     private Guid GetCurrentUserId()
     {
-        var rawUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var rawUserId = User.FindFirst("userId")?.Value;
+
         return Guid.TryParse(rawUserId, out var userId) ? userId : Guid.Empty;
+    }
+
+    private bool IsCurrentUserAdmin()
+    {
+        var role = User.FindFirst("role")?.Value?.Trim();
+        return string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase);
     }
 }

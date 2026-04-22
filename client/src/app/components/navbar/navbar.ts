@@ -17,8 +17,8 @@ export class Navbar {
     this.authService = authService;
   }
 
-  get userEmail(): string | null {
-    return this.authService.getUserEmail();
+  get userName(): string | null {
+    return this.authService.getUserName();
   }
 
   get isLoggedIn(): boolean {
@@ -28,15 +28,6 @@ export class Navbar {
   get isAdmin(): boolean {
     return this.authService.getUserRole() === 'Admin';
   }
-
-  // isNavbarLinkActive(path: string): boolean {
-  //   return isActive(path, {
-  //     paths: 'exact',
-  //     queryParams: 'ignored',
-  //     fragment: 'ignored',
-  //     matrixParams: 'ignored',
-  //   });
-  // }
 
   goToBookmarks() {
     // This method can be used if you want to navigate programmatically
