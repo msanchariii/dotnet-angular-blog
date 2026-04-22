@@ -10,11 +10,8 @@ import { CategoryService } from '../../services/category/category.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { EditBlog } from '../../components/edit-blog/edit-blog';
-
-interface Tag {
-  name: string;
-  id: string;
-}
+import { TagService } from '../../services/tag.service';
+import { FindTag } from '../../model/Tag';
 
 @Component({
   selector: 'app-blog-feed',
@@ -26,6 +23,7 @@ export class BlogFeed {
   constructor(
     private blogService: BlogService,
     private categoryService: CategoryService,
+    private tagService: TagService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private router: Router,
@@ -34,6 +32,8 @@ export class BlogFeed {
   blogData: FindBlogExtended[] = [];
   categories: FindCategory[] = [];
   selectedCategoryId: string | undefined;
+  tags: FindTag[] | undefined;
+  selectedTags: FindTag[] = [];
   first = 0;
   rows: 5 | 10 | 20 | 50 | 100 = 10;
   totalRecords = 0;
@@ -44,9 +44,6 @@ export class BlogFeed {
   ];
 
   selectedSort: 'newest' | 'oldest' = 'newest';
-
-  tags: Tag[] | undefined;
-  selectedTags: Tag[] = [];
 
   ngOnInit() {
     this.categoryService.getAllCategories().subscribe((categories) => {
@@ -81,11 +78,9 @@ export class BlogFeed {
         });
     });
 
-    this.tags = [
-      { name: 'Angular', id: 'angular' },
-      { name: 'TypeScript', id: 'typescript' },
-      { name: 'Web Development', id: 'web-development' },
-    ];
+    this.tagService.getAllTags().subscribe((tags) => {
+      this.tags = tags.data ?? [];
+    });
   }
 
   applyFilters() {
