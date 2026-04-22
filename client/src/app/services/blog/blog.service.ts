@@ -19,6 +19,7 @@ export class BlogService {
     PageNo?: number;
     SortBy?: 'newest' | 'oldest' | 'popular';
     CategoryId?: string;
+    Tags?: string[];
   }): Observable<FindBlogExtended[]> {
     const query = new URLSearchParams({ pageSize: params?.PageSize?.toString() ?? '10' });
 
@@ -32,6 +33,14 @@ export class BlogService {
 
     if (params?.CategoryId) {
       query.set('Category', params.CategoryId);
+    }
+
+    if (params?.Tags?.length) {
+      params.Tags.forEach((tag) => {
+        if (tag?.trim()) {
+          query.append('Tags', tag);
+        }
+      });
     }
 
     return this.http.get<ApiResponse<FindBlog[]>>(`/api/blogs?${query.toString()}`).pipe(
@@ -52,6 +61,7 @@ export class BlogService {
     PageNo?: number;
     SortBy?: 'newest' | 'oldest' | 'popular';
     CategoryId?: string;
+    Tags?: string[];
   }): Observable<FindBlogExtended[]> {
     const query = new URLSearchParams({ pageSize: params?.PageSize?.toString() ?? '10' });
 
@@ -65,6 +75,14 @@ export class BlogService {
 
     if (params?.CategoryId) {
       query.set('Category', params.CategoryId);
+    }
+
+    if (params?.Tags?.length) {
+      params.Tags.forEach((tag) => {
+        if (tag?.trim()) {
+          query.append('Tags', tag);
+        }
+      });
     }
 
     return this.http.get<ApiResponse<FindBlog[]>>(`/api/blogs/admin/all?${query.toString()}`).pipe(

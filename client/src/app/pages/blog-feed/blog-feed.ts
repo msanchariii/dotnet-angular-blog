@@ -32,8 +32,8 @@ export class BlogFeed {
   blogData: FindBlogExtended[] = [];
   categories: FindCategory[] = [];
   selectedCategoryId: string | undefined;
-  tags: FindTag[] | undefined;
-  selectedTags: FindTag[] = [];
+  tags: FindTag[] = [];
+  selectedTags: string[] = [];
   first = 0;
   rows: 5 | 10 | 20 | 50 | 100 = 10;
   totalRecords = 0;
@@ -54,6 +54,7 @@ export class BlogFeed {
     this.route.queryParamMap.subscribe((params) => {
       const sortBy = params.get('sortBy');
       const categoryId = params.get('categoryId');
+      const tags = params.getAll('tags');
       const pageNo = params.get('pageNo');
       const pageSize = params.get('pageSize');
       const parsedPageNo = this.parsePageNo(pageNo);
@@ -61,6 +62,7 @@ export class BlogFeed {
 
       this.selectedSort = sortBy === 'oldest' ? 'oldest' : 'newest';
       this.selectedCategoryId = categoryId ?? undefined;
+      this.selectedTags = tags.filter((tag) => tag.trim().length > 0);
       this.rows = parsedPageSize;
       this.first = ((parsedPageNo ?? 1) - 1) * parsedPageSize;
 
@@ -70,6 +72,7 @@ export class BlogFeed {
           PageNo: parsedPageNo,
           SortBy: this.selectedSort,
           CategoryId: this.selectedCategoryId,
+          Tags: this.selectedTags,
         })
         .subscribe((blogs) => {
           this.blogData = blogs;
@@ -89,6 +92,7 @@ export class BlogFeed {
       queryParams: {
         sortBy: this.selectedSort,
         categoryId: this.selectedCategoryId || null,
+        tags: this.selectedTags.length > 0 ? this.selectedTags : null,
         pageNo: 1,
         pageSize: this.rows,
       },
@@ -104,6 +108,18 @@ export class BlogFeed {
     this.selectedSort = 'newest';
     this.selectedCategoryId = undefined;
     this.selectedTags = [];
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        sortBy: this.selectedSort,
+        categoryId: null,
+        tags: null,
+        pageNo: 1,
+        pageSize: this.rows,
+      },
+      queryParamsHandling: 'merge',
+    });
   }
 
   onPageChange(event: PaginatorState) {
